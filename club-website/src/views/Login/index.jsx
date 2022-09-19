@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import { Grid } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -84,6 +85,7 @@ const Login = () => {
             <Typography component="span" variant="subtitle2" style={{display: (authError ? "" : "none"), color: '#D11616', fontWeight: 'bold', marginTop: '3%'}}>
               {authErrorMessage}
             </Typography>
+            <Button sx={{mt:1}} onClick={() => setIsAdmin(!isAdmin) }>{isAdmin ? "Ingresar como estudiante" : "Ingresar como administrador"}</Button>
             <Box component="form" onSubmit={submit} noValidate sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
@@ -111,8 +113,9 @@ const Login = () => {
                 value={values.Password}
                 {...(errors.Password && {error:true, helperText:errors.Password})}
               />
-              <Button sx={{mt:0}} onClick={() => setIsAdmin(!isAdmin) }>{isAdmin ? "Ingresar como estudiante" : "Ingresar como administrador"}</Button>
-
+              <Grid container mt={1} justifyContent='center'>
+              <Button onClick={() => navigate(`/register-${isAdmin ? "admin" : "user"}`) }>Crear cuenta</Button>
+              </Grid>
               <Button
                 type="submit"
                 fullWidth
