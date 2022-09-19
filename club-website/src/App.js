@@ -5,14 +5,15 @@ import {
   Link
 } from "react-router-dom";
 import Login from "../src/views/Login";
-import RegisterUser from "../src/views/RegisterUser";
+import RegisterUser from "../src/views/UserViews/RegisterUser";
 import Navbar from "../src/components/Navbar";
-import RegisterAdmin from "../src/views/RegisterAdmin";
+import RegisterAdmin from "../src/views/AdminViews/RegisterAdmin";
 import AdminHome from "./views/AdminViews/AdminHome";
 import Top5Clubs from "./views/AdminViews/Top5Clubs";
 import Bottom3Clubs from "./views/AdminViews/Bottom3Clubs";
 import StudentMoreSuggestions from "./views/AdminViews/StudentMoreSuggestions";
 import ClubsByCategory from "./views/AdminViews/ClubsByCategory";
+import MyClubs from "./views/UserViews/MyClubs";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/admin/bottom3-clubs" element={<Bottom3Clubs/>} />
         <Route path="/admin/student-more-suggestions" element={<StudentMoreSuggestions/>} />
         <Route path="/admin/clubs-by-category" element={<ClubsByCategory/>} />
+        <Route path="/user/my-clubs" element={<MyClubs/>} />
       </Routes>
 
     </Router>

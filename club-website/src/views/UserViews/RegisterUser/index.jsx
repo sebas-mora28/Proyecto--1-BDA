@@ -7,10 +7,10 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useForm, Form } from '../../components/UseForm';
+import { useForm, Form } from '../../../components/UseForm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const RegisterAdmin = () => {
+const RegisterUser = () => {
 
     const initialValues = {
         Email: '',
@@ -70,7 +70,7 @@ const RegisterAdmin = () => {
         <AccountCircleIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Crear cuenta : Administrador
+        Crear cuenta : Usuario
       </Typography>
       <Typography component="h1" variant="h5">
       </Typography>
@@ -113,7 +113,19 @@ const RegisterAdmin = () => {
           onChange={handleInputChange}
           value={values.Password}
           {...(errors.Password && {error:true, helperText:errors.Password})}
-        /> 
+        />
+        <TextField
+          margin="normal"
+          fullWidth
+          name="Group"
+          label="Seccion"
+          type="text"
+          id="group"
+          onChange={handleInputChange}
+          value={values.Password}
+        />
+
+ 
         <Button
           type="submit"
           fullWidth
@@ -129,4 +141,4 @@ const RegisterAdmin = () => {
   )
 }
 
-export default RegisterAdmin
+export default RegisterUser
