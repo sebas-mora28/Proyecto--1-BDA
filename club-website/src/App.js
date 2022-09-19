@@ -5,8 +5,14 @@ import {
   Link
 } from "react-router-dom";
 import Login from "../src/views/Login";
-import Register from "../src/views/Register";
+import RegisterUser from "../src/views/RegisterUser";
 import Navbar from "../src/components/Navbar";
+import RegisterAdmin from "../src/views/RegisterAdmin";
+import AdminHome from "./views/AdminViews/AdminHome";
+import Top5Clubs from "./views/AdminViews/Top5Clubs";
+import Bottom3Clubs from "./views/AdminViews/Bottom3Clubs";
+import StudentMoreSuggestions from "./views/AdminViews/StudentMoreSuggestions";
+import ClubsByCategory from "./views/AdminViews/ClubsByCategory";
 
 function App() {
   return (
@@ -15,7 +21,14 @@ function App() {
       <Navbar/>
       <Routes>
         <Route path="/" element={<Login/>}  />
-        <Route path="/register" element={<Register/>} />
+        <Route path="/login" element={<Login/>}  />
+        <Route path="/register-user" element={<RegisterUser/>} />
+        <Route path="/register-admin" element={<RegisterAdmin/>} />
+        <Route path="/admin/home" element={<AdminHome/>} />
+        <Route path="/admin/top5-clubs" element={<Top5Clubs/>} />
+        <Route path="/admin/bottom3-clubs" element={<Bottom3Clubs/>} />
+        <Route path="/admin/student-more-suggestions" element={<StudentMoreSuggestions/>} />
+        <Route path="/admin/clubs-by-category" element={<ClubsByCategory/>} />
       </Routes>
 
     </Router>

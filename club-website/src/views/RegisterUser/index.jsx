@@ -10,7 +10,7 @@ import Container from '@mui/material/Container';
 import { useForm, Form } from '../../components/UseForm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const Register = () => {
+const RegisterUser = () => {
 
     const initialValues = {
         Email: '',
@@ -70,7 +70,7 @@ const Register = () => {
         <AccountCircleIcon />
       </Avatar>
       <Typography component="h1" variant="h5">
-        Registrarse
+        Crear cuenta : Usuario
       </Typography>
       <Typography component="h1" variant="h5">
       </Typography>
@@ -141,4 +141,4 @@ const Register = () => {
   )
 }
 
-export default Register
+export default RegisterUser
