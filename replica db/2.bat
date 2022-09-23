@@ -1,0 +1,1 @@
+mongod --config .\server_1.conf

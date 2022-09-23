@@ -1,0 +1,1 @@
+python -u ".\init_servers.py"
