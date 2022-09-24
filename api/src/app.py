@@ -14,6 +14,16 @@ dbc=mongo.db.clubs
 
 
 ##Ready
+
+"""{
+    "user":"santamix",
+    "password":"santa",
+    "names":"josue gabriel",
+    "lastnames":"santamaria ramirez",
+    "section":"12-1",
+    "isAdmin":"true"
+    }"""
+
 @app.route('/users/CreateUser', methods=['POST'])
 def createUser():
     #datos
@@ -36,6 +46,11 @@ def createUser():
     return {'message':'usuario creado con exito'}
 
 #Ready
+
+"""{
+    "id":"632f4b12b91fa067007722a6"
+    }
+"""
 @app.route('/users/getUser/', methods=['GET'])
 def getUser():
     id=request.json['id']
@@ -49,7 +64,12 @@ def getUser():
         'section':doc['section'],
         'isAdmin':doc['isAdmin'],
         })
+
 ##Ready
+"""{
+    "user":"santamix",
+    "password":"santa"
+    }"""
 @app.route('/users/userLogin', methods=['GET'])
 def getUserLogin():
 
@@ -75,6 +95,9 @@ def getUserLogin():
     return response
 
 ##Ready
+"""{
+    "id":"632f4b12b91fa067007722a6"
+    }"""
 @app.route('/users/deleteUser', methods=['DELETE'])
 def deleteUsers():
     id=request.json['id']
@@ -82,6 +105,7 @@ def deleteUsers():
     return jsonify({'msg': 'User deleted'})
 
 ##Ready
+
 @app.route('/users', methods=['GET'])
 def getUsers():
     users=[]
@@ -98,6 +122,15 @@ def getUsers():
     return jsonify(users)
     
 ##Ready
+"""{
+    "name":"Dibujo",
+    "category":"Arte",
+    "followers":[
+                {"idU":"1234", "nameU":"josue"},
+                {"idU":"12345", "nameU":"julio"},
+                {"idU":"123124", "nameU":"mario"}
+                ]
+}"""
 @app.route('/clubs/CreateClub', methods=['POST'])
 def createClub():
     #datos
@@ -134,6 +167,11 @@ def getClubs():
         })
     return jsonify(clubs)
 #ready
+"""
+    {
+    "id":"632f8dbbc09c9bb365a1e955"
+    }
+"""
 @app.route('/clubs/deleteClub', methods=['DELETE'])
 def deleteClub():
     id=request.json['id']
