@@ -64,7 +64,6 @@ const Navbar = () => {
             }}
           >
           </Typography>
-
         </Toolbar>
       </Container>
     </AppBar>
