@@ -1,22 +1,19 @@
-from crypt import methods
 
 from flask import Flask, request, jsonify
-
 from flask_pymongo import PyMongo, ObjectId
-from bson import json_util
 
-app = Flask(__name__)
+app= Flask(__name__)
+app.config['MONGO_URI']='mongodb://localhost/proyectDB'
 
-app.config['Mongo_URI']= 'mongodb://localhost:27017/base'
+mongo= PyMongo(app)
 
-mongo = PyMongo(app)
-
+dc=mongo.db.clubss
 
 dbu=mongo.db.users
 dbc=mongo.db.clubs
 
 
-@app.route('/users/<user>,<password>,<names>,<lastnames>,<section>,<isAdmin>', methods=['POST'])
+@app.route('/users/CreateUser', methods=['POST'])
 def createUser( user, 
                 password, 
                 names, 
@@ -26,7 +23,7 @@ def createUser( user,
                 ):
     #datos
     #usuario, password,nombres, apellidos, seccion, esAdmin
-    id=dbu.insert({'user':user,
+    id=dbu.insert_one({'user':user,
                     'password':password,
                     'names':names,
                     'lastnames':lastnames,
@@ -36,8 +33,21 @@ def createUser( user,
     
     return jsonify(str(ObjectId(id)))
 
-@app.route('/user/<id>', methods=['GET'])
+@app.route('/users/getUser/<id>', methods=['GET'])
 def getUser(id):
+    user=dbu.find_one({'_id':ObjectId(id)})
+    return jsonify({
+        '_id':str(ObjectId(user['_id'])),
+        'names': user['names'],
+        'user':user['user'],
+        'password':user['password'],
+        'lastnames':user['lastnames'],
+        'section':user['section'],
+        'isAdmin':user['isAdmin'],
+        })
+
+@app.route('/user/<id>', methods=['GET'])
+def getUserLogin(id):
     user=dbu.find_one({'_id':ObjectId(id)})
     return jsonify({
         '_id':str(ObjectId(user['_id'])),
@@ -71,16 +81,22 @@ def getUsers():
         })
     return jsonify(users)
 
-@app.route('/clubs/<name>,<category>,<followers>', methods=['POST'])
-def createClub(name,category,followers):
+@app.route('/clubs/CreateClub', methods=['POST'])
+def createClub():
     #datos
+    name = request.json['name']
+    category = request.json['category']
+    followers = [request.json['followers']]
+    
     #nombre,categoria,seguidores(id de usuarios)
-    id=dbc.insert({'name':name,
+    id=dbc.insert_one(
+                    {'name':name,
                     'category':category,
-                    'followers':followers
-                    
-                    })
-    return jsonify(str(ObjectId(id)))
+                    'followers':followers})
+
+    return {'message':'exito'}
+    #
+    #jsonify(str(ObjectId(id)))
 
 @app.route('/clubs/<id>,<idUser>', methods=['PUT'])
 def updateFollowers(id):
@@ -134,8 +150,8 @@ def getClubs():
 
 ###conteo de todos los id de los clubes que mas se repitan
 ####Tomaríamos el id de la lista de followers de los clubes
-@app.route('/users/<id>', methods=['GET'])
-def getUsersTop(id):
+@app.route('/users/top3', methods=['GET'])
+def getUsersTop():
 
     user=dbu.find_one({'_id':ObjectId(id)})
     return jsonify({
@@ -144,12 +160,15 @@ def getUsersTop(id):
         'lastnames':user['lastnames']  
         })
 
+
+######Una consulta de los mejores y luego un match.
+
 #Top 5 de clubes sugeridos. Se debe mostrar una
 #  lista de los cinco clubes más solicitados,
 #  incluyendo el nombre del club, la categoría
 #  y la cantidad de veces que fue sugerido.
 @app.route('/clubs/<id>', methods=['GET'])
-def getClubsTop():
+def getClubsTop5():
     clubs=[]
     for doc in dbc.find():
         clubs.append({
@@ -165,7 +184,7 @@ def getClubsTop():
 #incluyendo el nombre del club, la categoría y 
 #la cantidad de veces que fue sugerido.
 
-##??????
+
 
 if __name__ == '__main__':
     app.run(debug=True)
