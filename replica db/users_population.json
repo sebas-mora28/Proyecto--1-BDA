@@ -1,39 +1,40 @@
 {
-    "Name": "Jose Alejandro Chavarria Madriz",
-    "Email": "joalchama@gmail.com",
-    "Password":"1234",
-    "Class":"6A",
-    "Admin":false
+    "user": "joalchama@gmail.com",
+    "password":"1234",
+    "names": "Jose Alejandro",
+    "lastnames":"Chavarria Madriz",
+    "section":"6A",
+    "isAdmin":false
 }
 {
-    "Name": "Sebastian Mora Godinez",
-    "Email": "semasmora@gmail.com",
-    "Password":"12345",
-    "Class":"6B",
-    "Admin":false
+    "user": "semasmora@gmail.com",
+    "password":"12345",
+    "names": "Sebastian",
+    "lastnames":"Mora Godinez",
+    "section":"6B",
+    "isAdmin":false
 }
 {
-    "Name": "Josue",
-    "Email": "josue@gmail.com",
-    "Password":"123456",
-    "Class":"7C",
-    "Admin":false
+    "user":"santamix@gmail.com",
+    "password":"santa",
+    "names":"josue gabriel",
+    "lastnames":"santamaria ramirez",
+    "section":"12-1",
+    "isAdmin":false
 }
 {
-    "Name": "Pedro Perico",
-    "Email": "rico_perico@gmail.com",
-    "Password":"1234567",
-    "Admin":false
+    "user": "admin@gmail.com",
+    "password":"123",
+    "names": "admin",
+    "lastnames":"",
+    "section":"",
+    "isAdmin":true
 }
 {
-    "Name": "admin",
-    "Email": "admin@gmail.com",
-    "Password":"123",
-    "Admin":true
-}
-{
-    "Name": "admin_2",
-    "Email": "admin_2@gmail.com",
-    "Password":"321",
-    "Admin":true
+    "user": "admin_2@gmail.com",
+    "password":"321",
+    "names": "admin2",
+    "lastnames":"",
+    "section":"",
+    "isAdmin":true
 }
