@@ -1,20 +1,25 @@
 {
-    "Name": "Pintura con acuarela",
-    "Category": "Artes"
+    "name": "Pintura con acuarela",
+    "category": "Artes",
+    "followers": []
 }
 {
-    "Name": "Danza interpretativa",
-    "Category": "Artes"
+    "name": "Danza interpretativa",
+    "category": "Artes",
+    "followers": []
 }
 {
-    "Name": "Teatro",
-    "Category": "Artes"
+    "name": "Teatro",
+    "category": "Artes",
+    "followers": []
 }
 {
-    "Name": "Volleyball",
-    "Category": "Deportes"
+    "name": "Volleyball",
+    "category": "Deportes",
+    "followers": []
 }
 {
-    "Name": "Latín",
-    "Category": "Idioma"
+    "name": "Latín",
+    "category": "Idioma",
+    "followers": []
 }
