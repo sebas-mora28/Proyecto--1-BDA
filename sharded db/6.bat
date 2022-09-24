@@ -1,0 +1,1 @@
+mongos --config .\router_server.conf

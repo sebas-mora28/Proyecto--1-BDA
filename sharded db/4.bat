@@ -1,0 +1,1 @@
+mongod --config .\shard_server_1.conf

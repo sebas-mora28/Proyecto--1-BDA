@@ -1,0 +1,19 @@
+del C:/data 
+mkdir C:/data/configsvr
+mkdir C:/data/db0
+mkdir C:/data/db1
+mkdir C:/data/db2
+
+mongod --config .\config_server.conf
+python -u ".\init_config_server.py"
+
+mongod --config .\shard_server_0.conf
+mongod --config .\shard_server_1.conf
+mongod --config .\shard_server_2.conf
+python -u ".\init_shard_server.py"
+
+mongos --config .\router_server.conf
+python -u ".\init_router_server.py"
+
+mongoimport -h localhost:113 -d clubesDB -c users users_population.json
+mongoimport -h localhost:113 -d clubesDB -c clubes clubes_population.json
