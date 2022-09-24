@@ -2,26 +2,28 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo, ObjectId
 
+
 app= Flask(__name__)
 app.config['MONGO_URI']='mongodb://localhost/proyectDB'
 
 mongo= PyMongo(app)
 
-dc=mongo.db.clubss
 
 dbu=mongo.db.users
 dbc=mongo.db.clubs
 
 
+##Ready
 @app.route('/users/CreateUser', methods=['POST'])
-def createUser( user, 
-                password, 
-                names, 
-                lastnames, 
-                section, 
-                isAdmin
-                ):
+def createUser():
     #datos
+    user=request.json['user'] 
+    password=request.json['password'] 
+    names=request.json['names'] 
+    lastnames=request.json['lastnames']  
+    section=request.json['section']  
+    isAdmin=request.json['isAdmin'] 
+           
     #usuario, password,nombres, apellidos, seccion, esAdmin
     id=dbu.insert_one({'user':user,
                     'password':password,
@@ -31,41 +33,55 @@ def createUser( user,
                     'isAdmin':isAdmin
                     })
     
-    return jsonify(str(ObjectId(id)))
+    return {'message':'usuario creado con exito'}
 
-@app.route('/users/getUser/<id>', methods=['GET'])
-def getUser(id):
-    user=dbu.find_one({'_id':ObjectId(id)})
+#Ready
+@app.route('/users/getUser/', methods=['GET'])
+def getUser():
+    id=request.json['id']
+    doc=dbu.find_one({'_id':ObjectId(id)})
     return jsonify({
-        '_id':str(ObjectId(user['_id'])),
-        'names': user['names'],
-        'user':user['user'],
-        'password':user['password'],
-        'lastnames':user['lastnames'],
-        'section':user['section'],
-        'isAdmin':user['isAdmin'],
+        '_id':str(ObjectId(doc['_id'])),
+        'names': doc['names'],
+        'user':doc['user'],
+        'password':doc['password'],
+        'lastnames':doc['lastnames'],
+        'section':doc['section'],
+        'isAdmin':doc['isAdmin'],
         })
+##Ready
+@app.route('/users/userLogin', methods=['GET'])
+def getUserLogin():
 
-@app.route('/user/<id>', methods=['GET'])
-def getUserLogin(id):
-    user=dbu.find_one({'_id':ObjectId(id)})
-    return jsonify({
-        '_id':str(ObjectId(user['_id'])),
-        'names': user['names'],
-        'user':user['user'],
-        'password':user['password'],
-        'lastnames':user['lastnames'],
-        'section':user['section'],
-        'isAdmin':user['isAdmin'],
+    
+    user=request.json['user']
+    password=request.json['password']
+
+    doc=dbu.find_one_or_404({'user':user})
+    doc2=dbu.find_one_or_404({'password':password})
+
+    if doc and doc2 :
+        response=jsonify({
+        '_id':str(ObjectId(doc['_id'])),
+        'names': doc['names'],
+        'user':doc['user'],
+        'password':doc['password'],
+        'lastnames':doc['lastnames'],
+        'section':doc['section'],
+        'isAdmin':doc['isAdmin'],
         })
+    else:
+        response={'message':'error'}
+    return response
 
-
-@app.route('/users/<id>', methods=['DELETE'])
-def deleteUsers(id):
+##Ready
+@app.route('/users/deleteUser', methods=['DELETE'])
+def deleteUsers():
+    id=request.json['id']
     dbu.delete_one({'_id': ObjectId(id)})
     return jsonify({'msg': 'User deleted'})
 
-
+##Ready
 @app.route('/users', methods=['GET'])
 def getUsers():
     users=[]
@@ -80,7 +96,8 @@ def getUsers():
             'isAdmin':doc['isAdmin']
         })
     return jsonify(users)
-
+    
+##Ready
 @app.route('/clubs/CreateClub', methods=['POST'])
 def createClub():
     #datos
@@ -95,38 +112,11 @@ def createClub():
                     'followers':followers})
 
     return {'message':'exito'}
-    #
-    #jsonify(str(ObjectId(id)))
-
-@app.route('/clubs/<id>,<idUser>', methods=['PUT'])
-def updateFollowers(id):
-    dbc.update_one({'_id': ObjectId(id)},
-    {'$set':{
-        'followers': request.json['idUser']     
-    }})
-    return jsonify({'msg': 'User updated'})
-
-##comprobar club, si devuelve algo se debe hacer el metodo en el fe para que lo descarte y tire error
-@app.route('/clubs/<name>,<category>', methods=['GET'])
-def getClubsTop():
-    clubs=[]
-    for doc in dbc.find():
-        clubs.append({
-            '_id':str(ObjectId(doc['_id'])),
-            'name':doc['name'],
-            'category':doc['category'],
-            'followers':doc['followers'] #Hacer un conteo en el fe          
-        })
-    return jsonify(clubs)
 
 
 
 
-@app.route('/clubs/<id>', methods=['DELETE'])
-def deleteClub(id):
-    dbc.delete_one({'_id': ObjectId(id)})
-    return jsonify({'msg': 'Club deleted'})
-
+#Ready
 # Cantidad total de clubes distintos
 # sugeridos por los estudiantes, según la 
 #categoría. Por ejemplo: 30 clubes de arte,
@@ -143,6 +133,41 @@ def getClubs():
             
         })
     return jsonify(clubs)
+#ready
+@app.route('/clubs/deleteClub', methods=['DELETE'])
+def deleteClub():
+    id=request.json['id']
+    dbc.find_one_and_delete({'_id': ObjectId(id)})
+    return jsonify({'msg': 'Club deleted'})
+
+##Working--------------------------------------------------------------------------------------------------------
+
+@app.route('/clubs/updateFollowers', methods=['PUT'])
+def updateFollowers():
+    id=request.json['id']
+    idUser=request.json['idUser']
+    nameU=request.json['nameU']
+    dbc.update_one({'_id': ObjectId(id)},
+    {'$set':{
+        'followers': {'idUser':idUser, 'nameU':nameU}    
+    }})
+    return jsonify({'msg': 'User updated'})
+
+
+
+##comprobar club, si devuelve algo se debe hacer el metodo en el fe para que lo descarte y tire error
+@app.route('/clubs/getClubsTop', methods=['GET'])
+def getClubsTop():
+    clubs=[]
+    for doc in dbc.find():
+        clubs.append({
+            '_id':str(ObjectId(doc['_id'])),
+            'name':doc['name'],
+            'category':doc['category'],
+            'followers':doc['followers'] #Hacer un conteo en el fe          
+        })
+    return jsonify(clubs)
+
    
 #Mostrar el nombre completo y la cantidad de
 #  clubes sugeridos para lostres estudiantes
