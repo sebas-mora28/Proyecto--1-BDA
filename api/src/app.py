@@ -224,9 +224,8 @@ def getUsersTop():
         'lastnames':user['lastnames']  
         })
 
-
+###Ready
 ######Una consulta de los mejores y luego un match.
-
 #Top 5 de clubes sugeridos. Se debe mostrar una
 #  lista de los cinco clubes más solicitados,
 #  incluyendo el nombre del club, la categoría
@@ -242,12 +241,23 @@ def getClubsTop5():
     
     
     orden=sorted(clubs, key=lambda x: x['followers'], reverse=True)
-    
-    
-    
-    
-      
-    return jsonify(orden)
+    top=[]
+    i=0
+    for doc2 in orden:
+       
+        doc3=dbc.find_one({'_id':ObjectId(doc2['_id'])})
+        
+        if doc3 and i<5:  
+            i+=1        
+            top.append({
+                    '_id':str(ObjectId(doc3['_id'])),
+                    'name':doc3['name'],
+                    'category':doc3['category'],
+                    'followers':doc2['followers']
+                    
+                })
+    print(top)
+    return jsonify(top)
 
 
 #Bottom 3 de clubes sugeridos. Se debe mostrar una
