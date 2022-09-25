@@ -264,7 +264,34 @@ def getClubsTop5():
 #lista de los cinco clubes menos solicitados,
 #incluyendo el nombre del club, la categoría y 
 #la cantidad de veces que fue sugerido.
-
+@app.route('/clubs/getClubsBtt3', methods=['GET'])
+def getClubsBtt3():
+    clubs=[]
+    for doc in dbc.aggregate([{"$project":{"count":{"$size":"$followers"}}}]):
+        clubs.append({
+            '_id':str(ObjectId(doc['_id'])),
+            'followers':doc['count'] #Hacer un conteo en el fe          
+        })
+    
+    
+    orden=sorted(clubs, key=lambda x: x['followers'])
+    top=[]
+    i=0
+    for doc2 in orden:
+       
+        doc3=dbc.find_one({'_id':ObjectId(doc2['_id'])})
+        
+        if doc3 and i<3:  
+            i+=1        
+            top.append({
+                    '_id':str(ObjectId(doc3['_id'])),
+                    'name':doc3['name'],
+                    'category':doc3['category'],
+                    'followers':doc2['followers']
+                    
+                })
+    print(top)
+    return jsonify(top)
 
 
 if __name__ == '__main__':
