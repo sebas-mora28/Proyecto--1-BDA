@@ -1,5 +1,8 @@
 
+from ast import Del
+from operator import delitem
 from urllib import response
+from winreg import DeleteValue
 from flask import Flask, request, jsonify, json
 from flask_pymongo import PyMongo, ObjectId
 
@@ -184,6 +187,27 @@ def getClubs():
 
     return jsonify(clubs)
 
+############################
+@app.route('/clubs2', methods=['GET'])
+def getClubs2():
+    name=request.json['name']
+    clubs=[]
+
+    doc=dbc.find_one_or_404({'name':name})
+    if doc:
+        response=jsonify({'followers':doc['followers']})
+    #foll=json.loads(response)
+        clubs.append({
+            'followers':doc['followers']         
+        })
+        for doc2 in clubs:
+            if doc2['idU']=='12':
+                print(doc2)
+
+    
+    return response
+#############################
+
 #Ready
 """
     {
@@ -202,17 +226,23 @@ def deleteClub():
 
 ##Working--------------------------------------------------------------------------------------------------------
 
-@app.route('/clubs/updateFollowers', methods=['PUT'])
-def updateFollowers():
+@app.route('/clubs/updateDesuscrip', methods=['PUT'])
+def updateDesuscrip():
+    
     id=request.json['id']
     idUser=request.json['idU']
-    nameU=request.json['nameU']
     
-    dbc._insert_one({'_id': ObjectId(id)},
+    
+    dbc.update_one({'_id':ObjectId(id)},{'$pull':{'followers':{'idU':idUser}}})
+    return jsonify({'msg': 'User updated'})
+    #x=dbc.delete_one({'followers':{'$elemMatch':{'idU':idUser}}})
+    
+    print(x)
+    """dbc._insert_one({'_id': ObjectId(id)},
     {
         'followers': {'idU':idUser, 'nameU':nameU}    
-    })
-    return jsonify({'msg': 'User updated'})
+    })"""
+    
 
 
 #Mostrar el nombre completo y la cantidad de
@@ -249,6 +279,7 @@ def getClubsTop5():
             '_id':str(ObjectId(doc['_id'])),
             'followers':doc['count']         
         })
+        print(clubs)
     
     orden=sorted(clubs, key=lambda x: x['followers'], reverse=True)
 
@@ -310,7 +341,7 @@ def getClubsBtt3():
                     'category':doc3['category'],
                     'followers':doc2['followers']                    
                 })  
-                
+
     return jsonify(btt3)
 
 
