@@ -246,9 +246,23 @@ def updateSuscrip():
     
     dbc.update_one({'_id':ObjectId(id)},{'$push':{'followers':{'idU':idUser}}})
     return jsonify({'msg': 'User updated'})
-       
-
-
+#db.clubs.find({followers:{$elemMatch:{idU:"6"}}})
+@app.route('/clubs/usersTopSubs', methods=['GET'])
+def userTopSubs():
+    
+    
+    idUser=request.json['idU']
+    
+    apps=[]
+    responses=dbc.find({'followers':{'$elemMatch':{'idU':idUser}}})
+    for doc in responses:
+        apps.append({
+            '_id':str(ObjectId(doc['_id'])),
+            'name':doc['name'],
+            'category':doc['category'],
+            'followers':doc['followers']})
+            
+    return jsonify(apps)
 #Mostrar el nombre completo y la cantidad de
 #  clubes sugeridos para lostres estudiantes
 #  que más sugerencias hayan realizado.
