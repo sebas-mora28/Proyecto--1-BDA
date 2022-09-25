@@ -1,4 +1,5 @@
 
+from urllib import response
 from flask import Flask, request, jsonify, json
 from flask_pymongo import PyMongo, ObjectId
 
@@ -12,9 +13,8 @@ mongo= PyMongo(app)
 dbu=mongo.db.users
 dbc=mongo.db.clubs
 
-#
-##Ready
 
+##Ready
 """{
     "user":"santamix",
     "password":"santa",
@@ -23,57 +23,58 @@ dbc=mongo.db.clubs
     "section":"12-1",
     "isAdmin":"true"
     }"""
-
 @app.route('/users/CreateUser', methods=['POST'])
 def createUser():
-    #datos
+
     user=request.json['user'] 
     password=request.json['password'] 
     names=request.json['names'] 
     lastnames=request.json['lastnames']  
     section=request.json['section']  
     isAdmin=request.json['isAdmin'] 
-           
-    #usuario, password,nombres, apellidos, seccion, esAdmin
-    id=dbu.insert_one({'user':user,
-                    'password':password,
-                    'names':names,
-                    'lastnames':lastnames,
-                    'section':section,
-                    'isAdmin':isAdmin
-                    })
+
+    id=dbu.insert_one({
+        'user':user,
+        'password':password,
+        'names':names,
+        'lastnames':lastnames,
+        'section':section,
+        'isAdmin':isAdmin
+        })
     
-    return {'message':'usuario creado con exito'}
+    return {'message': 
+            'usuario creado con exito'}
 
 #Ready
-
 """{
     "id":"632f4b12b91fa067007722a6"
     }
 """
 @app.route('/users/getUser/', methods=['GET'])
 def getUser():
+
     id=request.json['id']
     doc=dbu.find_one({'_id':ObjectId(id)})
+
     return jsonify({
-        '_id':str(ObjectId(doc['_id'])),
-        'names': doc['names'],
-        'user':doc['user'],
-        'password':doc['password'],
-        'lastnames':doc['lastnames'],
-        'section':doc['section'],
-        'isAdmin':doc['isAdmin'],
-        })
+                    '_id':str(ObjectId(doc['_id'])),
+                    'names': doc['names'],
+                    'user':doc['user'],
+                    'password':doc['password'],
+                    'lastnames':doc['lastnames'],
+                    'section':doc['section'],
+                    'isAdmin':doc['isAdmin'],
+                    })
 
 ##Ready
 """{
     "user":"santamix",
     "password":"santa"
     }"""
+
 @app.route('/users/userLogin', methods=['GET'])
 def getUserLogin():
 
-    
     user=request.json['user']
     password=request.json['password']
 
@@ -81,6 +82,7 @@ def getUserLogin():
     doc2=dbu.find_one_or_404({'password':password})
 
     if doc and doc2 :
+
         response=jsonify({
         '_id':str(ObjectId(doc['_id'])),
         'names': doc['names'],
@@ -90,25 +92,33 @@ def getUserLogin():
         'section':doc['section'],
         'isAdmin':doc['isAdmin'],
         })
+
     else:
+
         response={'message':'error'}
+
     return response
 
 ##Ready
 """{
     "id":"632f4b12b91fa067007722a6"
     }"""
+
 @app.route('/users/deleteUser', methods=['DELETE'])
 def deleteUsers():
+
     id=request.json['id']
     dbu.delete_one({'_id': ObjectId(id)})
-    return jsonify({'msg': 'User deleted'})
+
+    return jsonify({'msg':
+                    'User deleted'})
 
 ##Ready
-
 @app.route('/users', methods=['GET'])
 def getUsers():
+
     users=[]
+
     for doc in dbu.find():
         users.append({
             '_id':str(ObjectId(doc['_id'])),
@@ -119,6 +129,7 @@ def getUsers():
             'section':doc['section'],
             'isAdmin':doc['isAdmin']
         })
+
     return jsonify(users)
     
 ##Ready
@@ -131,32 +142,37 @@ def getUsers():
                 {"idU":"123124", "nameU":"mario"}
                 ]
 }"""
+
 @app.route('/clubs/CreateClub', methods=['POST'])
 def createClub():
-    #datos
+    
     name = request.json['name']
     category = request.json['category']
     followers = request.json['followers']
     
-    #nombre,categoria,seguidores(id de usuarios)
     id=dbc.insert_one(
                     {'name':name,
                     'category':category,
                     'followers':followers})
+    if id :
+        response = {'message':'exito'}
 
-    return {'message':'exito'}
+    else:
+        {'message':'error'}
 
-
-
+    return response
 
 #Ready
 # Cantidad total de clubes distintos
 # sugeridos por los estudiantes, según la 
 #categoría. Por ejemplo: 30 clubes de arte,
 #  10 de deportes, etc.
+
 @app.route('/clubs', methods=['GET'])
 def getClubs():
+
     clubs=[]
+
     for doc in dbc.find():
         clubs.append({
             '_id':str(ObjectId(doc['_id'])),
@@ -165,8 +181,10 @@ def getClubs():
             'followers':doc['followers']
             
         })
+
     return jsonify(clubs)
-#ready
+
+#Ready
 """
     {
     "id":"632f8dbbc09c9bb365a1e955"
@@ -174,9 +192,13 @@ def getClubs():
 """
 @app.route('/clubs/deleteClub', methods=['DELETE'])
 def deleteClub():
+
     id=request.json['id']
+
     dbc.find_one_and_delete({'_id': ObjectId(id)})
-    return jsonify({'msg': 'Club deleted'})
+    
+    return jsonify({'msg': 
+                    'Club deleted'})
 
 ##Working--------------------------------------------------------------------------------------------------------
 
@@ -193,27 +215,10 @@ def updateFollowers():
     return jsonify({'msg': 'User updated'})
 
 
-
-##comprobar club, si devuelve algo se debe hacer el metodo en el fe para que lo descarte y tire error
-@app.route('/clubs/getClubsTop', methods=['GET'])
-def getClubsTop():
-    clubs=[]
-    for doc in dbc.find():
-        clubs.append({
-            '_id':str(ObjectId(doc['_id'])),
-            'name':doc['name'],
-            'category':doc['category'],
-            'followers':doc['followers'] #Hacer un conteo en el fe          
-        })
-    return jsonify(clubs)
-
-   
 #Mostrar el nombre completo y la cantidad de
 #  clubes sugeridos para lostres estudiantes
 #  que más sugerencias hayan realizado.
 
-###conteo de todos los id de los clubes que mas se repitan
-####Tomaríamos el id de la lista de followers de los clubes
 @app.route('/users/top3', methods=['GET'])
 def getUsersTop():
 
@@ -225,29 +230,37 @@ def getUsersTop():
         })
 
 ###Ready
-######Una consulta de los mejores y luego un match.
 #Top 5 de clubes sugeridos. Se debe mostrar una
 #  lista de los cinco clubes más solicitados,
 #  incluyendo el nombre del club, la categoría
 #  y la cantidad de veces que fue sugerido.
+
 @app.route('/clubs/getClubsTop5', methods=['GET'])
 def getClubsTop5():
+
     clubs=[]
-    for doc in dbc.aggregate([{"$project":{"count":{"$size":"$followers"}}}]):
+
+    for doc in dbc.aggregate([
+        {"$project":{"count":
+        {"$size":"$followers"}
+        }}]):
+
         clubs.append({
             '_id':str(ObjectId(doc['_id'])),
-            'followers':doc['count'] #Hacer un conteo en el fe          
+            'followers':doc['count']         
         })
     
-    
     orden=sorted(clubs, key=lambda x: x['followers'], reverse=True)
+
     top=[]
     i=0
+
     for doc2 in orden:
-       
+
         doc3=dbc.find_one({'_id':ObjectId(doc2['_id'])})
         
         if doc3 and i<5:  
+
             i+=1        
             top.append({
                     '_id':str(ObjectId(doc3['_id'])),
@@ -256,42 +269,49 @@ def getClubsTop5():
                     'followers':doc2['followers']
                     
                 })
-    print(top)
+    
     return jsonify(top)
 
-
+##Ready
 #Bottom 3 de clubes sugeridos. Se debe mostrar una
 #lista de los cinco clubes menos solicitados,
 #incluyendo el nombre del club, la categoría y 
 #la cantidad de veces que fue sugerido.
 @app.route('/clubs/getClubsBtt3', methods=['GET'])
 def getClubsBtt3():
+
     clubs=[]
-    for doc in dbc.aggregate([{"$project":{"count":{"$size":"$followers"}}}]):
+    for doc in dbc.aggregate([
+        {"$project":{"count":
+        {"$size":"$followers"}
+        }}]):
+
         clubs.append({
             '_id':str(ObjectId(doc['_id'])),
             'followers':doc['count'] #Hacer un conteo en el fe          
         })
     
-    
     orden=sorted(clubs, key=lambda x: x['followers'])
-    top=[]
+
+    btt3=[]
     i=0
-    for doc2 in orden:
-       
-        doc3=dbc.find_one({'_id':ObjectId(doc2['_id'])})
-        
-        if doc3 and i<3:  
+
+    for doc2 in orden:  
+
+        doc3=dbc.find_one(
+            {'_id':ObjectId(doc2['_id'])}) 
+
+        if doc3 and i<3: 
+
             i+=1        
-            top.append({
-                    '_id':str(ObjectId(doc3['_id'])),
+            btt3.append(
+                {'_id':str(ObjectId(doc3['_id'])),
                     'name':doc3['name'],
                     'category':doc3['category'],
-                    'followers':doc2['followers']
-                    
-                })
-    print(top)
-    return jsonify(top)
+                    'followers':doc2['followers']                    
+                })  
+                
+    return jsonify(btt3)
 
 
 if __name__ == '__main__':
