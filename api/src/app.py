@@ -1,10 +1,10 @@
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, json
 from flask_pymongo import PyMongo, ObjectId
 
 
 app= Flask(__name__)
-app.config['MONGO_URI']='mongodb://localhost:110/clubesDB'
+app.config['MONGO_URI']='mongodb://localhost/proyectDB'
 
 mongo= PyMongo(app)
 
@@ -12,7 +12,7 @@ mongo= PyMongo(app)
 dbu=mongo.db.users
 dbc=mongo.db.clubs
 
-
+#
 ##Ready
 
 """{
@@ -136,7 +136,7 @@ def createClub():
     #datos
     name = request.json['name']
     category = request.json['category']
-    followers = [request.json['followers']]
+    followers = request.json['followers']
     
     #nombre,categoria,seguidores(id de usuarios)
     id=dbc.insert_one(
@@ -183,12 +183,13 @@ def deleteClub():
 @app.route('/clubs/updateFollowers', methods=['PUT'])
 def updateFollowers():
     id=request.json['id']
-    idUser=request.json['idUser']
+    idUser=request.json['idU']
     nameU=request.json['nameU']
-    dbc.update_one({'_id': ObjectId(id)},
-    {'$set':{
-        'followers': {'idUser':idUser, 'nameU':nameU}    
-    }})
+    
+    dbc._insert_one({'_id': ObjectId(id)},
+    {
+        'followers': {'idU':idUser, 'nameU':nameU}    
+    })
     return jsonify({'msg': 'User updated'})
 
 
@@ -230,17 +231,24 @@ def getUsersTop():
 #  lista de los cinco clubes más solicitados,
 #  incluyendo el nombre del club, la categoría
 #  y la cantidad de veces que fue sugerido.
-@app.route('/clubs/<id>', methods=['GET'])
+@app.route('/clubs/getClubsTop5', methods=['GET'])
 def getClubsTop5():
     clubs=[]
-    for doc in dbc.find():
+    for doc in dbc.aggregate([{"$project":{"count":{"$size":"$followers"}}}]):
         clubs.append({
             '_id':str(ObjectId(doc['_id'])),
-            'name':doc['name'],
-            'category':doc['category'],
-            'followers':doc['followers'] #Hacer un conteo en el fe          
+            'followers':doc['count'] #Hacer un conteo en el fe          
         })
-    return jsonify(clubs)
+    
+    
+    orden=sorted(clubs, key=lambda x: x['followers'], reverse=True)
+    
+    
+    
+    
+      
+    return jsonify(orden)
+
 
 #Bottom 3 de clubes sugeridos. Se debe mostrar una
 #lista de los cinco clubes menos solicitados,
