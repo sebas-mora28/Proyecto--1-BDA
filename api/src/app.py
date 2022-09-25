@@ -225,7 +225,7 @@ def deleteClub():
                     'Club deleted'})
 
 ##Working--------------------------------------------------------------------------------------------------------
-
+#Metodo para desuscribirse de un club
 @app.route('/clubs/updateDesuscrip', methods=['PUT'])
 def updateDesuscrip():
     
@@ -235,14 +235,18 @@ def updateDesuscrip():
     
     dbc.update_one({'_id':ObjectId(id)},{'$pull':{'followers':{'idU':idUser}}})
     return jsonify({'msg': 'User updated'})
-    #x=dbc.delete_one({'followers':{'$elemMatch':{'idU':idUser}}})
+
+#Metodo para suscribirse a un club  
+@app.route('/clubs/updateSuscrip', methods=['PUT'])
+def updateSuscrip():
     
-    print(x)
-    """dbc._insert_one({'_id': ObjectId(id)},
-    {
-        'followers': {'idU':idUser, 'nameU':nameU}    
-    })"""
+    id=request.json['id']
+    idUser=request.json['idU']
     
+    
+    dbc.update_one({'_id':ObjectId(id)},{'$push':{'followers':{'idU':idUser}}})
+    return jsonify({'msg': 'User updated'})
+       
 
 
 #Mostrar el nombre completo y la cantidad de
