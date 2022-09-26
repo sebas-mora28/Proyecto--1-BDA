@@ -80,25 +80,58 @@ def getUserLogin():
 
     user=request.json['user']
     password=request.json['password']
+    isAdmin="false"
+    myquery={"user":user}
+    
+    doc=dbu.find(myquery)
+    
+    for x in doc:
 
-    doc=dbu.find_one_or_404({'user':user})
-    doc2=dbu.find_one_or_404({'password':password})
+        if x['password']==password and x['isAdmin']==isAdmin:
 
-    if doc and doc2 :
+            response=jsonify({
+            '_id':str(ObjectId(x['_id'])),
+            'names': x['names'],
+            'user':x['user'],
+            'password':x['password'],
+            'lastnames':x['lastnames'],
+            'section':x['section'],
+            'isAdmin':x['isAdmin'],
+            })
 
-        response=jsonify({
-        '_id':str(ObjectId(doc['_id'])),
-        'names': doc['names'],
-        'user':doc['user'],
-        'password':doc['password'],
-        'lastnames':doc['lastnames'],
-        'section':doc['section'],
-        'isAdmin':doc['isAdmin'],
-        })
+        else:
 
-    else:
+            response={'message':'error'}
 
-        response={'message':'error'}
+    return response
+
+@app.route('/users/adminLogin', methods=['GET'])
+def getAdminLogin():
+
+    user=request.json['user']
+    password=request.json['password']
+    isAdmin="true"
+    myquery={"user":user}
+    
+    doc=dbu.find(myquery)
+    
+    for x in doc:
+
+        if x['password']==password and x['isAdmin']==isAdmin:
+
+            response=jsonify({
+            '_id':str(ObjectId(x['_id'])),
+            'names': x['names'],
+            'user':x['user'],
+            'password':x['password'],
+            'lastnames':x['lastnames'],
+            'section':x['section'],
+            'isAdmin':x['isAdmin'],
+            })
+
+        else:
+
+            response={'message':'error'}
 
     return response
 
@@ -106,6 +139,22 @@ def getUserLogin():
 """{
     "id":"632f4b12b91fa067007722a6"
     }"""
+
+
+@app.route('/clubs/myClubs/<id>', methods=['GET'])
+def myClubs(id):
+    clubs=[]
+    
+    responses=dbc.find({'followers':{'$elemMatch':{'idU':id}}})
+    print(responses)
+    for doc in responses:
+        clubs.append({
+                '_id':str(ObjectId(doc['_id'])),
+                'name':doc['name'],
+                'category':doc['category'],
+                'followers':doc['followers']})
+
+    return jsonify(clubs)
 
 @app.route('/users/deleteUser', methods=['DELETE'])
 def deleteUsers():
@@ -132,8 +181,8 @@ def getUsers():
             'section':doc['section'],
             'isAdmin':doc['isAdmin']
         })
-
-    return jsonify(users)
+    
+    return users
     
 ##Ready
 """{
@@ -190,19 +239,19 @@ def getClubs():
 ############################
 @app.route('/clubs2', methods=['GET'])
 def getClubs2():
-    name=request.json['name']
+    category=request.json['category']
     clubs=[]
 
-    doc=dbc.find_one_or_404({'name':name})
+    doc=dbc.find({'category':category})
     if doc:
-        response=jsonify({'followers':doc['followers']})
+        response=jsonify({'category':doc['category'],'followers':doc['followers']})
     #foll=json.loads(response)
-        clubs.append({
-            'followers':doc['followers']         
-        })
-        for doc2 in clubs:
-            if doc2['idU']=='12':
-                print(doc2)
+        #clubs.append({
+            #'followers':doc['followers']         
+        #})
+        #for doc2 in clubs:
+            #if doc2['idU']=='12':'
+                #print(doc2)
 
     
     return response
@@ -250,19 +299,48 @@ def updateSuscrip():
 @app.route('/clubs/usersTopSubs', methods=['GET'])
 def userTopSubs():
     
+    #for doc in dbu.find():
     
-    idUser=request.json['idU']
-    
-    apps=[]
-    responses=dbc.find({'followers':{'$elemMatch':{'idU':idUser}}})
-    for doc in responses:
-        apps.append({
-            '_id':str(ObjectId(doc['_id'])),
-            'name':doc['name'],
-            'category':doc['category'],
-            'followers':doc['followers']})
+    #idUser=request.json['idU']
+    users=[]
+    for doc in dbu.find():
+        users.append({
+            '_id':str(ObjectId(doc['_id'])),          
+            'names':doc['names'],
+            'lastnames':doc['lastnames'],
             
-    return jsonify(apps)
+        })
+        
+
+    apps=[]
+    for user in users:
+        responses=dbc.find({'followers':{'$elemMatch':{'idU':user['_id']}}})
+        countAppeared=0
+        for doc in responses:
+            countAppeared+=1
+            apps.append({
+                '_id':str(ObjectId(doc['_id'])),
+                'name':doc['name'],
+                'category':doc['category'],
+                'followers':doc['followers']})
+        
+        user['count']=countAppeared
+    orden=sorted(users, key=lambda x: x['count'], reverse=True)
+    i=0
+    top=[]
+    for doc5 in orden:
+        if doc5 and i<3:
+            i+=1
+            print(i)        
+            top.append({
+                '_id':str(ObjectId(doc5['_id'])),          
+                'names':doc5['names'],
+                'lastnames':doc5['lastnames'],
+                'count':doc5['count']
+                    
+                })
+
+    return jsonify(top)
 #Mostrar el nombre completo y la cantidad de
 #  clubes sugeridos para lostres estudiantes
 #  que más sugerencias hayan realizado.
