@@ -23,6 +23,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "win_start": "react-scripts start",
     "start": "REACT_APP_PORT=5000 react-scripts start",
     "start1": "REACT_APP_PORT=5001 react-scripts start",
     "start2": "REACT_APP_PORT=5001 react-scripts start",
