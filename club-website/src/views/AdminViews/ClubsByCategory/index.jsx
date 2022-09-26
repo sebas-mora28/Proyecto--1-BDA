@@ -39,7 +39,7 @@ const ClubsByCategory = () => {
   }));
 
   useEffect(() => {
-    axios({method: 'GET', url: `${baseUrl}/clubs/usersTopSubs`}).then((response) => {
+    axios({method: 'GET', url: `${baseUrl}/clubs/countByCategory`}).then((response) => {
       if(response.data){
         setClubs(response.data)
       }
@@ -49,21 +49,21 @@ const ClubsByCategory = () => {
   return (
 
     <Grid container>
-      <Header title={"Clubes por categoria"} backUrl={"/admin/home"}  />
+      <Header title={"Cantidad de clubes por categoria"} backUrl={"/admin/home"}  />
       <Grid item container md={12} paddingLeft={1} paddingRight={2} justifyContent={'center'}>
         <TableContainer component={Paper} sx={{ maxHeight: 450, maxWidth:600}}>
           <Table stickyHeader aria-label="customized table">
             <TableHead>
               <TableRow>
                 <StyledTableCell align="center">Categoría</StyledTableCell>
-                <StyledTableCell align="center"># de sugerencias</StyledTableCell>
+                <StyledTableCell align="center"># de clubes</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {clubs.map((row, i) => (
                 <StyledTableRow key={i}>
                   <StyledTableCell align="center">{row.category}</StyledTableCell>
-                  <StyledTableCell align="center">{row.number_of_suggestions}</StyledTableCell>
+                  <StyledTableCell align="center">{row.count}</StyledTableCell>
                 </StyledTableRow>
               ))}
             </TableBody>
