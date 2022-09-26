@@ -98,7 +98,7 @@ const RegisterClub = () => {
     const save = () => {
 
         if(clubs.find(c => c.status === "subscribed")){
-             navigate("/users/my-clubs")
+             navigate("/user/my-clubs")
         }else {
             setOpenError(true)
         }
@@ -108,8 +108,8 @@ const RegisterClub = () => {
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <Alert title="Debe encontrarse registrado en al menos un curso" open={open} handleClose={setOpen} />
-            <CreateClub open={openError} setOpen={setOpenError}/>
+            <Alert title="Debe encontrarse registrado en al menos un curso" open={openError} handleClose={setOpenError} />
+            <CreateClub open={open} setOpen={setOpen}/>
             <Grid container>
                 <Header title="Registrar club" backUrl="/user/my-clubs"/>
                 <Grid item container md={12} justifyContent='center'>

@@ -10,9 +10,10 @@ PORT = os.getenv("PORT")
 PORT_MONGO  = os.getenv("PORT_MONGO")
 
 app= Flask(__name__)
-app.config['MONGO_URI']= 'mongodb://localhost:{PORT_MONGO}/proyectDB'.format(PORT_MONGO=PORT_MONGO)
+app.config['MONGO_URI']= 'mongodb://localhost:{PORT_MONGO}/proyecto'.format(PORT_MONGO=PORT_MONGO)
 
 mongo= PyMongo(app)
+
 
 
 dbu=mongo.db.users
@@ -38,6 +39,7 @@ def createUser():
     section=request.json['section']  
     isAdmin=request.json['isAdmin'] 
 
+
     id=dbu.insert_one({
         'user':user,
         'password':password,
@@ -46,9 +48,16 @@ def createUser():
         'section':section,
         'isAdmin':isAdmin
         })
+
+    user = dbu.find_one({"_id": ObjectId(id.inserted_id)})
     
-    return {'message': 
-            'usuario creado con exito'}
+    return jsonify({
+                    '_id':str(ObjectId(user['_id'])),
+                    'names': user['names'],
+                    'lastnames':user['lastnames'],
+                    'section':user['section'],
+                    'isAdmin':user['isAdmin'],
+                    })
 
 #Ready
 """{
@@ -77,7 +86,7 @@ def getUser():
     "password":"santa"
     }"""
 
-@app.route('/users/userLogin', methods=['GET'])
+@app.route('/users/userLogin', methods=['POST'])
 def getUserLogin():
 
     user=request.json['user']
@@ -89,7 +98,7 @@ def getUserLogin():
     
     for x in doc:
 
-        if x['password']==password and x['isAdmin']==isAdmin:
+        if x['password']==password and x['isAdmin']==False:
 
             response=jsonify({
             '_id':str(ObjectId(x['_id'])),
@@ -107,7 +116,7 @@ def getUserLogin():
 
     return response
 
-@app.route('/users/adminLogin', methods=['GET'])
+@app.route('/users/adminLogin', methods=['POST'])
 def getAdminLogin():
 
     user=request.json['user']
@@ -119,7 +128,7 @@ def getAdminLogin():
     
     for x in doc:
 
-        if x['password']==password and x['isAdmin']==isAdmin:
+        if x['password']==password and x['isAdmin']==True:
 
             response=jsonify({
             '_id':str(ObjectId(x['_id'])),
@@ -199,15 +208,15 @@ def getUsers():
 
 @app.route('/clubs/CreateClub', methods=['POST'])
 def createClub():
-    
     name = request.json['name']
     category = request.json['category']
-    followers = request.json['followers']
-    
+    idUser = request.json['idUser']
+
     id=dbc.insert_one(
                     {'name':name,
                     'category':category,
-                    'followers':followers})
+                    'followers':[{'idU': idUser}]})
+
     if id :
         response = {'message':'exito'}
 
@@ -298,6 +307,8 @@ def updateSuscrip():
     dbc.update_one({'_id':ObjectId(id)},{'$push':{'followers':{'idU':idUser}}})
     return jsonify({'msg': 'User updated'})
 #db.clubs.find({followers:{$elemMatch:{idU:"6"}}})
+
+
 @app.route('/clubs/usersTopSubs', methods=['GET'])
 def userTopSubs():
     
@@ -305,14 +316,13 @@ def userTopSubs():
     
     #idUser=request.json['idU']
     users=[]
-    for doc in dbu.find():
+    for doc in dbu.find({'isAdmin': False}):
         users.append({
             '_id':str(ObjectId(doc['_id'])),          
             'names':doc['names'],
             'lastnames':doc['lastnames'],
             
         })
-        
 
     apps=[]
     for user in users:
@@ -442,6 +452,23 @@ def getClubsBtt3():
 
     return jsonify(btt3)
 
+
+@app.route('/clubs/clubsCategory', methods=['GET'])
+def clubsCategory():
+    category=request.json['category']
+    clubs=[]
+
+    for doc in dbc.find({'category':category}):
+        clubs.append({
+            '_id':str(ObjectId(doc['_id'])),
+            'name':doc['name'],
+            'category':doc['category'],
+            'followers':doc['followers']
+            
+        })
+    print(clubs)
+    
+    return jsonify(clubs)
 
 if __name__ == '__main__':
     app.run(host='localhost',port=PORT,debug=True)

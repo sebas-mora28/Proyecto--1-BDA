@@ -13,7 +13,7 @@ const Navbar = () => {
 
   return (
     <AppBar position="static" style={{ background: '#118CE7' }}>
-      <Container maxWidth="xl" justifyContext='center'>
+      <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
             variant="h6"

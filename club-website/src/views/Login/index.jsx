@@ -66,6 +66,7 @@ const Login = () => {
     const submit = (e) => {
         e.preventDefault();
         if(validate()){
+          console.log(baseUrl)
           axios({method: 'POST', url: `${baseUrl}/users/${isAdmin ? "adminLogin" :"userLogin"}`, data: values }).then((response) => {
             const user = response.data
             if(user){
