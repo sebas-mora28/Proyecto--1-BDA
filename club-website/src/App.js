@@ -40,7 +40,7 @@ function App() {
           <Route path="/admin/home" element={<AdminHome/>} />
           <Route path="/admin/top5-clubs" element={<Top5Clubs/>} />
           <Route path="/admin/bottom3-clubs" element={<Bottom3Clubs/>} />
-          <Route path="/admin/student-more-sugg" element={<StudentMoreSuggestions/>} />
+          <Route path="/admin/student-more-suggestions" element={<StudentMoreSuggestions/>} />
           <Route path="/admin/clubs-by-category" element={<ClubsByCategory/>} />
           <Route path="/user/my-clubs" element={<MyClubs/>} />
           <Route path="/user/register-club" element={<RegisterClub/>} />

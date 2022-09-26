@@ -49,7 +49,7 @@ const  StudentMoreSuggestions = () => {
 
   return (
     <Grid container>
-      <Header title={"Estudiantes con mas sugerencias"} backUrl={"/admin/home"}/>
+      <Header title={"Estudiantes con más sugerencias"} backUrl={"/admin/home"}/>
 
       <Grid item container md={12} paddingLeft={1} paddingRight={2} justifyContent={'center'}>
         <TableContainer component={Paper} sx={{ maxHeight: 450, maxWidth:600}}>

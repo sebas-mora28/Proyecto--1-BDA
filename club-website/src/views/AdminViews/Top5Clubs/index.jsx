@@ -51,7 +51,7 @@ const Top3Clubs = () => {
 
     <Grid container>
 
-      <Header title={"Top 5 clubs mas votados"} backUrl={"/admin/home"} />
+      <Header title={"Top 5 clubes más sugeridos"} backUrl={"/admin/home"} />
 
 
       <Grid item container md={12} paddingLeft={1} paddingRight={2}>
@@ -60,7 +60,7 @@ const Top3Clubs = () => {
             <TableHead>
               <TableRow>
                 <StyledTableCell>Posición</StyledTableCell>
-                <StyledTableCell align="center">Nombre del curso</StyledTableCell>
+                <StyledTableCell align="center">Nombre del club</StyledTableCell>
                 <StyledTableCell align="center">Categoría</StyledTableCell>
                 <StyledTableCell align="center"># de sugerencias</StyledTableCell>
               </TableRow>

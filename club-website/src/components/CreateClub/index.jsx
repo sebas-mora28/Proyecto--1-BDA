@@ -21,7 +21,7 @@ const CreateClub = ({open, setOpen}) => {
 
     const validate = (fieldValues = values) => {
         let temp = {...errors}
-        temp.name = fieldValues.name === "" ? "Este espacio es reqerido" : ""
+        temp.name = fieldValues.name === "" ? "Este espacio es requerido" : ""
         temp.category = fieldValues.category === "" ? "Este espacio es requerido" : ""  
 
         setErrors({
@@ -89,12 +89,12 @@ const CreateClub = ({open, setOpen}) => {
                                 sx={{width: '70%' }} 
                                 error={errors.category !== '' && errors.category !== undefined ? true : false}
                                 >
-                                <MenuItem value="sport">Deportes</MenuItem>
-                                <MenuItem value="art">Artes</MenuItem>
-                                <MenuItem value="idioms">Idiomas</MenuItem>
-                                <MenuItem value="math">Matematicas</MenuItem>
-                                <MenuItem value="science">Ciencias</MenuItem>
-                                <MenuItem value="handcraft">Manualidades</MenuItem>
+                                <MenuItem value="Deportes">Deportes</MenuItem>
+                                <MenuItem value="Artes">Artes</MenuItem>
+                                <MenuItem value="Idiomas">Idiomas</MenuItem>
+                                <MenuItem value="Matematicas">Matematicas</MenuItem>
+                                <MenuItem value="Ciencias">Ciencias</MenuItem>
+                                <MenuItem value="Manualidades">Manualidades</MenuItem>
                             </Select>
                             {errors.category && <FormHelperText htmlFor="countryBox" error> {errors.category} </FormHelperText>}
                         </FormControl>

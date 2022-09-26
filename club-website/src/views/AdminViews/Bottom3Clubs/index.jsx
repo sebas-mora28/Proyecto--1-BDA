@@ -50,7 +50,7 @@ const Bottom3Clubs = () => {
 
     <Grid container>
 
-      <Header title={"Top 3 menos sugeridos"} backUrl={"/admin/home"}  />
+      <Header title={"Top 3 clubes menos sugeridos"} backUrl={"/admin/home"}  />
 
       <Grid item container md={12} paddingLeft={1} paddingRight={2}>
         <TableContainer component={Paper} sx={{maxHeight: 450}}>
