@@ -2,13 +2,15 @@
 from ast import Del
 from operator import delitem
 from urllib import response
-from winreg import DeleteValue
 from flask import Flask, request, jsonify, json
 from flask_pymongo import PyMongo, ObjectId
+import os 
 
+PORT = os.getenv("PORT")
+PORT_MONGO  = os.getenv("PORT_MONGO")
 
 app= Flask(__name__)
-app.config['MONGO_URI']='mongodb://localhost/proyectDB'
+app.config['MONGO_URI']= 'mongodb://localhost:{PORT_MONGO}/proyectDB'.format(PORT_MONGO=PORT_MONGO)
 
 mongo= PyMongo(app)
 
@@ -442,5 +444,5 @@ def getClubsBtt3():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='localhost',port=PORT,debug=True)
 
