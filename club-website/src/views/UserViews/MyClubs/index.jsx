@@ -2,10 +2,25 @@ import React from 'react'
 import { Grid, List } from '@mui/material';
 import ItemClub from '../../../components/ItemClub';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { baseUrl } from '../../../utils/api';
+import { UserContext } from '../../../utils/auth';
+import { useContext } from 'react';
 const MyClubs = () => {
 
-    const [myClubs, setMyClubs] = useState([{name: "yoga", category: "sport", number_of_suggestions: 10}]);
+    const [myClubs, setMyClubs] = useState([]);
+    const {user, setUser} = useContext(UserContext);
 
+
+    useEffect(() => {
+        axios({method: 'GET', url: `${baseUrl}/clubs/myClubs/${user._id}`}).then((response) => {
+            if(response.data){
+                setMyClubs(response.data);
+            }
+        })
+    }, [])
+    
     return (
       <Grid container justifyContent='center'>
 
@@ -20,7 +35,7 @@ const MyClubs = () => {
                     myClubs.map(club => (
                         <ItemClub   name={club.name} 
                                     category={club.category} 
-                                    number_of_suggestions={club.number_of_suggestions}
+                                    number_of_suggestions={club.followers.length}
                         />
                     ))
                   }

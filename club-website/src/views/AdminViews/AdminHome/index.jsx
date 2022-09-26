@@ -1,16 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Grid, Button } from '@mui/material'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { UserContext } from '../../../utils/auth'
 
 const AdminHome = () => {
 
     const navigate = useNavigate();
+    const user = useContext(UserContext)
 
     return (
         <Grid container>
             <Grid container mt={3} justifyContent='center'>
-                <h1>Bievenido</h1>
+                <h1>Bievenido: {user.names} </h1>
             </Grid>
             <Grid container mt={3} justifyContent='center' alignItems='center' rowSpacing={4}>
                 <Grid item container md={6} justifyContent='center'>

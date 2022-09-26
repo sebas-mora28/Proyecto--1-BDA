@@ -2,48 +2,18 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import SpeedIcon from '@mui/icons-material/Speed';
-import ProfileIcon from '@mui/icons-material/Person';
-import {Link} from 'react-router-dom';
-import {useState, useEffect, useContext} from 'react'
-import axios from 'axios';
-import { UserContext } from '../../App';
+import {useNavigate} from 'react-router-dom';
 
 const Navbar = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [anchorElRace, setAnchorElRace] = React.useState(null);
 
-
-
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
-
-  const handleOpenRaceMenu = (event) => {
-    setAnchorElRace(event.currentTarget);
-  };
-
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
+  const navigate = useNavigate();
 
   return (
     <AppBar position="static" style={{ background: '#118CE7' }}>
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" justifyContext='center'>
         <Toolbar disableGutters>
           <Typography
             variant="h6"
@@ -64,6 +34,14 @@ const Navbar = () => {
             }}
           >
           </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>              
+              <Button
+                  onClick={() => navigate("/user/register-club")}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                  Registrarse a un club
+              </Button>
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>

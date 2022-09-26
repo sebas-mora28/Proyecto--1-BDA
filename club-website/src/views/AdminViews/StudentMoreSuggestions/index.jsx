@@ -10,10 +10,13 @@ import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
 import { useState } from 'react';
 import Header from '../../../components/Header';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { baseUrl } from '../../../utils/api';
 
 const  StudentMoreSuggestions = () => {
 
-  const [students, setStudents] = useState([{name: "Juan  Rojas", number_of_suggestions: 10}]);
+  const [students, setStudents] = useState([]);
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -35,6 +38,14 @@ const  StudentMoreSuggestions = () => {
     },
   }));
 
+  useEffect(() => {
+      axios({method: 'GET', url: `${baseUrl}/clubs/usersTopSubs`}).then((response) => {
+        if(response.data){
+          setStudents(response.data)
+        }
+      })
+  }, [])
+
 
   return (
     <Grid container>
@@ -52,8 +63,8 @@ const  StudentMoreSuggestions = () => {
             <TableBody>
               {students.map((row, i) => (
                 <StyledTableRow key={i}>
-                  <StyledTableCell align="center">{row.name}</StyledTableCell>
-                  <StyledTableCell align="center">{row.number_of_suggestions}</StyledTableCell>
+                  <StyledTableCell align="center">{row.names} {row.lastnames}</StyledTableCell>
+                  <StyledTableCell align="center">{row.count}</StyledTableCell>
                 </StyledTableRow>
               ))}
             </TableBody>

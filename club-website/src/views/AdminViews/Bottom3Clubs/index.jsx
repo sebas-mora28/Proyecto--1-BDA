@@ -10,6 +10,9 @@ import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
 import { useState } from 'react';
 import Header from '../../../components/Header';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { baseUrl } from '../../../utils/api';
 
 const Bottom3Clubs = () => {
 
@@ -34,6 +37,14 @@ const Bottom3Clubs = () => {
       border: 0,
     },
   }));
+
+  useEffect(() => {
+    axios({method: 'GET', url: `${baseUrl}/clubs/getClubsBtt3`}).then((response) => {
+      if(response.data){
+        setClubs(response.data);
+      }
+    })
+  }, [])
 
   return (
 
@@ -60,7 +71,7 @@ const Bottom3Clubs = () => {
                   </StyledTableCell>
                   <StyledTableCell align="center">{row.name}</StyledTableCell>
                   <StyledTableCell align="center">{row.category}</StyledTableCell>
-                  <StyledTableCell align="center">{row.number_of_suggestions}</StyledTableCell>
+                  <StyledTableCell align="center">{row.followers}</StyledTableCell>
                 </StyledTableRow>
               ))}
             </TableBody>

@@ -10,6 +10,9 @@ import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
 import { useState } from 'react';
 import Header from '../../../components/Header';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { baseUrl } from '../../../utils/api';
 
 const Top3Clubs = () => {
 
@@ -35,6 +38,15 @@ const Top3Clubs = () => {
     },
   }));
 
+  useEffect(() => {
+
+    axios({method: "GET", url: `${baseUrl}/clubs/getClubsTop5`}).then((response) => {
+      if(response.data){
+        setClubs(response.data)
+      }
+    })
+  }, [])
+
   return (
 
     <Grid container>
@@ -42,7 +54,7 @@ const Top3Clubs = () => {
       <Header title={"Top 5 clubs mas votados"} backUrl={"/admin/home"} />
 
 
-      <Grid container md={12} paddingLeft={1} paddingRight={2}>
+      <Grid item container md={12} paddingLeft={1} paddingRight={2}>
         <TableContainer component={Paper} sx={{maxHeight: 450}}>
           <Table sx={{ minWidth: 600 }} stickyHeader aria-label="customized table">
             <TableHead>
@@ -61,7 +73,7 @@ const Top3Clubs = () => {
                   </StyledTableCell>
                   <StyledTableCell align="center">{row.name}</StyledTableCell>
                   <StyledTableCell align="center">{row.category}</StyledTableCell>
-                  <StyledTableCell align="center">{row.number_of_suggestions}</StyledTableCell>
+                  <StyledTableCell align="center">{row.followers}</StyledTableCell>
                 </StyledTableRow>
               ))}
             </TableBody>

@@ -10,6 +10,9 @@ import Paper from '@mui/material/Paper';
 import { Grid } from '@mui/material';
 import { useState } from 'react';
 import Header from '../../../components/Header';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { baseUrl } from '../../../utils/api';
 
 const ClubsByCategory = () => {
 
@@ -35,12 +38,18 @@ const ClubsByCategory = () => {
     },
   }));
 
+  useEffect(() => {
+    axios({method: 'GET', url: `${baseUrl}/clubs/usersTopSubs`}).then((response) => {
+      if(response.data){
+        setClubs(response.data)
+      }
+    })
+  }, [])
+
   return (
 
     <Grid container>
-
-      <Header title={"Top 3 menos sugeridos"} backUrl={"/admin/home"}  />
-
+      <Header title={"Clubes por categoria"} backUrl={"/admin/home"}  />
       <Grid item container md={12} paddingLeft={1} paddingRight={2} justifyContent={'center'}>
         <TableContainer component={Paper} sx={{ maxHeight: 450, maxWidth:600}}>
           <Table stickyHeader aria-label="customized table">

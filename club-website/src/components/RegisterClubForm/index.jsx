@@ -1,88 +1,80 @@
 import React from 'react'
 import { Button, Grid, List } from '@mui/material'
-import Header from '../../../components/Header'
-import DragWrapper from '../../../components/DragWrapper'
+import Header from '../Header'
+import DragWrapper from '../DragWrapper'
 import { useState } from 'react'
-import ItemDraggable from '../../../components/ItemDraggable'
+import ItemDraggable from '../ItemDraggable'
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import CreateClub from '../../../components/CreateClub'
-import ItemClub from '../../../components/ItemClub'
+import CreateClub from '../CreateClub'
+import ItemClub from '../ItemClub'
 import { useEffect } from 'react'
 import axios from 'axios'
-import { baseUrl } from '../../../utils/api'
+import { baseUrl } from '../../utils/api'
+import { getCurrentUser, UserContext } from '../../utils/auth'
+import Alert from '../Alert'
+import { addStatusAttr } from '../../utils/util'
 import { useContext } from 'react'
-import { UserContext } from '../../../utils/auth'
-import Alert from '../../../components/Alert'
-import { Navigate, useNavigate } from 'react-router-dom'
 
-const RegisterClub = () => {
+const RegisterClubForm = ({clubs, setClubs, finishRegisterUser}) => {
     const [open, setOpen] = useState(false);
-    const [openError, setOpenError] = useState(false);
-    const [clubs, setClubs] = useState([]);
     const [dragAndDropData, setDragAndDropData] = useState({});
+    const [currentUser , setCurrentUser] = useState({});
+    const [openError, setOpenError] = useState(false);
+    const [myClubs, setMyClubs] = useState([]);
 
     const {user, setUser} = useContext(UserContext)
 
-    const navigate = useNavigate()
+    const updateStatus = () => {
 
-    useEffect(() => {
-        updateStatus(user._id)
-    }, [])
+        axios({method: 'GET', url: `${baseUrl}/clubs/${currentUser._id}`})
+        .then((response) =>{
+            if(response.data){
 
+                const newClubs = clubs.map(c => {
+                    if(myClubs.find(mc => mc._id === c._id)){
+                        c.status = "subscribed"
+                    }
+                    return c;
+                })
+                setClubs(newClubs)
+            }
+        })
+
+    }
 
     useEffect(() => {
         if(!open){
-            updateStatus(user._id)
+            updateStatus();
         }
     }, [open])
 
 
-    const updateStatus = (userId) => {
 
-        axios({method: 'GET', url: `${baseUrl}/clubs`})
-        .then((response) =>{
-            if(response.data){
-                const clubs = response.data
-                axios({method: 'GET', url: `${baseUrl}/clubs/myClubs/${userId}`})
-                .then((responseMyClubs) => {
-                    if(response.data){
-                        const myClubs = responseMyClubs.data
-                        console.log("myClubs: ", myClubs)
-                        const newClubs = clubs.map(c => {
-                            c.status = myClubs.find(mc => mc._id === c._id) ? "subscribed" : "available"  
-                            return c
-
-                        })
-                        console.log("newClubs: ", newClubs)
-                        setClubs(newClubs)
-                    }
-                })
-            }
-        })
-    }
 
     useEffect(() => {
-
         const {clubId, board} = dragAndDropData;
         if(board === "board-available"){
             console.log("Entra a cursos disponibles")
-            axios({ method: 'PUT', 
-                    url: `${baseUrl}/clubs/updateDesuscrip`, 
-                    data: { id: clubId, idU: user._id}})
-                .then((response) => {
-                updateStatus(user._id)
-            })
+            const updatedClubs = clubs.map(c => {
+                        if(c._id === clubId){
+                            c.status = "available"
+                        }
+                        return c;
+                })
+            setClubs(updatedClubs)
         }
+
         if(board === "board-subscribed"){
             console.log("Entra a cursos suscritos")
-            axios({ method: 'PUT', 
-                    url: `${baseUrl}/clubs/updateSuscrip`, 
-                    data: { id: clubId, idU: user._id}})
-                .then((response) => {
-                    updateStatus(user._id)
-            })
-        }        
+                const updatedClubs = clubs.map(c => {
+                        if(c._id === clubId){
+                            c.status = "subscribed"
+                        }
+                        return c;
+                })
+                setClubs(updatedClubs)
+            }        
     }, [dragAndDropData])
 
 
@@ -90,17 +82,14 @@ const RegisterClub = () => {
         setDragAndDropData({clubId: id, board: board})
     }
 
-    useEffect(() => {
-        console.log("clubs: ", clubs)
-    }, [clubs])
+    const finalize = () => {
 
+        const myClubs = clubs.filter(c => c.status === "subscribed")
+        if(myClubs.length !== 0){
+            finishRegisterUser();
 
-    const save = () => {
-
-        if(clubs.find(c => c.status === "subscribed")){
-             navigate("/users/my-clubs")
-        }else {
-            setOpenError(true)
+        } else {
+            setOpenError(true);
         }
     }
 
@@ -108,10 +97,12 @@ const RegisterClub = () => {
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <Alert title="Debe encontrarse registrado en al menos un curso" open={open} handleClose={setOpen} />
-            <CreateClub open={openError} setOpen={setOpenError}/>
+            <Alert title={"Debe registrar al menos un club"} open={openError} handleClose={setOpenError} />
+            <CreateClub open={open} setOpen={setOpen}/>
             <Grid container>
-                <Header title="Registrar club" backUrl="/user/my-clubs"/>
+                <Grid item container md={12} justifyContent='center'>
+                    <h2>Registrar clubs</h2>
+                </Grid>
                 <Grid item container md={12} justifyContent='center'>
                     <Button variant='contained' onClick={() => setOpen(true)}>Crear club</Button>
                 </Grid>
@@ -134,7 +125,7 @@ const RegisterClub = () => {
                                                 <ItemClub 
                                                         name={club.name} 
                                                         category={club.category}
-                                                        number_of_suggestions={club.followers.length}
+                                                        number_of_suggestions={club.followers}
                                                         />
                                             </ItemDraggable> : <></>
                                         }
@@ -144,7 +135,7 @@ const RegisterClub = () => {
                         </DragWrapper>
                     </Grid>
                 </Grid>
-                <Grid item container md={6} justifyContent={'center'} mt={3}>
+                <Grid item container md={6} justifyContent='center' mt={3}>
                     <Grid item container md={12} justifyContent={'center'}>
                         <h3>Cursos inscritos</h3>
                     </Grid>
@@ -163,7 +154,7 @@ const RegisterClub = () => {
                                                 <ItemClub 
                                                         name={club.name} 
                                                         category={club.category}
-                                                        number_of_suggestions={club.followers.length}
+                                                        number_of_suggestions={club.followers}
                                                         />
                                             </ItemDraggable> : <></>
                                         }
@@ -172,14 +163,13 @@ const RegisterClub = () => {
                             </List>
                         </DragWrapper>
                     </Grid>
-                </Grid> 
-                <Grid item container md={12} justifyContent='center'>
-                    <Button variant="contained" onClick={() => save()}>Guardar</Button>
-
-                </Grid>               
+                </Grid>  
+                <Grid item container md={12} justifyContent='center' mt={2}>
+                    <Button variant='contained' onClick={() => finalize()}>Finalizar</Button>
+                </Grid>                
             </Grid>
         </DndProvider>
     )
 }
 
-export default RegisterClub
+export default RegisterClubForm

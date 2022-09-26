@@ -5,18 +5,24 @@ import Modal from '../Modal';
 import { useForm, Form } from '../UseForm';
 import { Select, Button } from '@mui/material';
 import { FormHelperText } from '@mui/material';
+import axios from 'axios';
+import { baseUrl } from '../../utils/api';
+import { UserContext } from '../../utils/auth';
+import { useContext } from 'react';
 
 const CreateClub = ({open, setOpen}) => {
 
+    const {user, setUser} = useContext(UserContext)
+
     const initialValues = {
-        NameClub: '',
-        Category: ''
+        name: '',
+        category: ''
     }
 
     const validate = (fieldValues = values) => {
         let temp = {...errors}
-        temp.NameClub = fieldValues.NameClub === "" ? "Este espacio es reqerido" : ""
-        temp.Category = fieldValues.Category === "" ? "Este espacio es requerido" : ""  
+        temp.name = fieldValues.name === "" ? "Este espacio es reqerido" : ""
+        temp.category = fieldValues.category === "" ? "Este espacio es requerido" : ""  
 
         setErrors({
             ...temp
@@ -31,7 +37,9 @@ const CreateClub = ({open, setOpen}) => {
         e.preventDefault();
 
         if(validate()){
-            console.log("entra")
+            const body = {...values, idUser: user._id}
+            console.log(body)
+            axios({method: 'POST', url:`${baseUrl}/clubs/CreateClub`, data: body})
             setOpen(false);
         }
     }
@@ -57,15 +65,15 @@ const CreateClub = ({open, setOpen}) => {
                 <Grid item container md={12} justifyContent='center'>
                     <TextField 
                               label="Nombre del club"
-                              name="NameClub"
+                              name="name"
                               placeholder=""
-                              value={values.NameClub}
+                              value={values.name}
                               onChange={handleInputChange}
                               InputLabelProps={{
                                   shrink: true,
                               }}
                               sx={{width: '60%'}} 
-                              {...(errors.NameClub && {error:true, helperText:errors.NameClub})}
+                              {...(errors.name && {error:true, helperText:errors.name})}
                           />
                 </Grid>
                 <Grid item container md={12} mt={4} justifyContent='center'>
@@ -74,12 +82,12 @@ const CreateClub = ({open, setOpen}) => {
                             <InputLabel id="category">Category*</InputLabel>               
                             <Select
                                 label="Category*"
-                                name="Category"
+                                name="category"
                                 id="category"
-                                value={values.Category}
+                                value={values.category}
                                 onChange={handleInputChange}
                                 sx={{width: '70%' }} 
-                                error={errors.Category !== '' && errors.Category !== undefined ? true : false}
+                                error={errors.category !== '' && errors.category !== undefined ? true : false}
                                 >
                                 <MenuItem value="sport">Deportes</MenuItem>
                                 <MenuItem value="art">Artes</MenuItem>
@@ -88,7 +96,7 @@ const CreateClub = ({open, setOpen}) => {
                                 <MenuItem value="science">Ciencias</MenuItem>
                                 <MenuItem value="handcraft">Manualidades</MenuItem>
                             </Select>
-                            {errors.Category && <FormHelperText htmlFor="countryBox" error> {errors.Category} </FormHelperText>}
+                            {errors.category && <FormHelperText htmlFor="countryBox" error> {errors.category} </FormHelperText>}
                         </FormControl>
 
                     </Grid>

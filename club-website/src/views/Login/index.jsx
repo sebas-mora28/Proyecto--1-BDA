@@ -11,27 +11,34 @@ import Container from '@mui/material/Container';
 import { useForm, Form } from '../../components/UseForm';
 import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { baseUrl } from '../../utils/api';
 import axios from 'axios'
-
+import AlertDialog from '../../components/Alert';
+import { UserContext } from '../../utils/auth';
 
 const Login = () => {
 
     const [authError, setAuthError] = useState(false)
     const [authErrorMessage, setAuthErrorMessage] = useState(false)
     const [isAdmin, setIsAdmin] = useState(false)
+    const [openAlert, setOpenAlert] =useState(false);
 
     const navigate = useNavigate();
+    const {user, setUser} = React.useContext(UserContext)
+
+    useEffect(() => {
+      setUser({})
+    }, [])
 
     const initialValues = {
-        Email: '',
-        Password: ''
+        user: '',
+        password: ''
     }
-
 
     const validate = (fieldValues = values) => {
         let temp = {...errors}
-        temp.Email = fieldValues.Email === "" ? "Este espacio es reqerido" : ""
-        temp.Password = fieldValues.Password === "" ? "Este espacio es requerido" : ""  
+        temp.user = fieldValues.user === "" ? "Este espacio es reqerido" : ""
+        temp.password = fieldValues.password === "" ? "Este espacio es requerido" : ""  
 
         setErrors({
             ...temp
@@ -59,11 +66,22 @@ const Login = () => {
     const submit = (e) => {
         e.preventDefault();
         if(validate()){
+          axios({method: 'POST', url: `${baseUrl}/users/${isAdmin ? "adminLogin" :"userLogin"}`, data: values }).then((response) => {
+            const user = response.data
+            if(user){
+              setUser(user);
+              const url = user.isAdmin ? "/admin/home" : "/user/my-clubs";
+              navigate(url);
+            }
+          }).catch((error) => {
+            setOpenAlert(true)
+          })
         }
     }
 
     return (
         <Container component="main" maxWidth="xs">
+          <AlertDialog title="Usuario o contraseña incorrecta" open={openAlert} handleClose={setOpenAlert}/>
           <CssBaseline />
           <Box
             sx={{
@@ -91,27 +109,27 @@ const Login = () => {
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="Correo electrónico"
-                name="Email"
-                autoComplete="email"
+                id="user"
+                label="Usuario"
+                name="user"
+                autoComplete="user"
                 autoFocus
                 onChange={handleInputChange}
-                value={values.Email}
-                {...(errors.Email && {error:true, helperText:errors.Email})}
+                value={values.user}
+                {...(errors.user && {error:true, helperText:errors.user})}
               />
               <TextField
                 margin="normal"
                 required
                 fullWidth
-                name="Password"
+                name="password"
                 label="Contraseña"
                 type="password"
                 id="password"
                 autoComplete="current-password"
                 onChange={handleInputChange}
-                value={values.Password}
-                {...(errors.Password && {error:true, helperText:errors.Password})}
+                value={values.password}
+                {...(errors.password && {error:true, helperText:errors.password})}
               />
               <Grid container mt={1} justifyContent='center'>
               <Button onClick={() => navigate(`/register-${isAdmin ? "admin" : "user"}`) }>Crear cuenta</Button>

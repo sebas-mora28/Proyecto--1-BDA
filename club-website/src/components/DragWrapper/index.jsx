@@ -16,7 +16,7 @@ const DragWrapper = ({children, id, type, className, addItem})  => {
 
     const [{isOver}, drop] = useDrop(() => ({
         accept: type,
-        drop: (item) => addItem(item.id),
+        drop: (item) => addItem(item.id, id),
         collect: (monitor) => ({
             isOver: !!monitor.isOver()
         })

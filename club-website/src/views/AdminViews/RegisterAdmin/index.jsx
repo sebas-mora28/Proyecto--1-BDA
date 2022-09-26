@@ -9,22 +9,25 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useForm, Form } from '../../../components/UseForm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { baseUrl } from '../../../utils/api';
+import axios from 'axios';
 
 const RegisterAdmin = () => {
 
     const initialValues = {
-        Email: '',
-        Password: '',
-        Name: '',
-        Group: '',
+        user: '',
+        password: '',
+        names: '',
+        lastnames: '',
     }
 
 
     const validate = (fieldValues = values) => {
         let temp = {...errors}
-        temp.Email = fieldValues.Email === "" ? "Este espacio es reqerido" : ""
-        temp.Password = fieldValues.Password === "" ? "Este espacio es requerido" : ""  
-        temp.Name = fieldValues.Name === "" ? "Este espacio es requerido" : ""
+        temp.user = fieldValues.user === "" ? "Este espacio es reqerido" : ""
+        temp.password = fieldValues.password === "" ? "Este espacio es requerido" : ""  
+        temp.names = fieldValues.names === "" ? "Este espacio es requerido" : ""
+        temp.lastnames = fieldValues.lastnames === "" ? "Este espacio es requerido" : ""
     
         setErrors({
             ...temp
@@ -52,6 +55,11 @@ const RegisterAdmin = () => {
     const submit = (e) => {
         e.preventDefault();
         if(validate()){
+          axios({method: 'POST', url: `${baseUrl}/users/CreateUser`, data: {
+            ...values, section: '', isAdmin: true
+          }}).then((response) => {
+            
+          })
         }
     }
 
