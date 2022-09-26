@@ -11,7 +11,7 @@ import { UserContext } from '../../utils/auth';
 const Navbar = () => {
 
   const navigate = useNavigate();
-  const user = React.useContext(UserContext)
+  const {user, setUser} = React.useContext(UserContext)
 
   return (
     <AppBar position="static" style={{ background: '#118CE7' }}>
