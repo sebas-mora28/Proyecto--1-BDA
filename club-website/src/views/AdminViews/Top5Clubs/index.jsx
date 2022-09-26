@@ -40,7 +40,7 @@ const Top3Clubs = () => {
 
   useEffect(() => {
 
-    axios({method: "GET", url: `${baseUrl}/clubs/getClubsTop5`}).then((response) => {
+    axios({method: "GET", url: `${baseUrl}/clubs/top5`}).then((response) => {
       if(response.data){
         setClubs(response.data)
       }

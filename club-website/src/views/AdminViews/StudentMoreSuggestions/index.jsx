@@ -39,7 +39,7 @@ const  StudentMoreSuggestions = () => {
   }));
 
   useEffect(() => {
-      axios({method: 'GET', url: `${baseUrl}/clubs/usersTopSubs`}).then((response) => {
+      axios({method: 'GET', url: `${baseUrl}/users/top3subs`}).then((response) => {
         if(response.data){
           setStudents(response.data)
         }

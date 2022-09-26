@@ -68,7 +68,7 @@ const RegisterClub = () => {
         if(board === "board-available"){
             console.log("Entra a cursos disponibles")
             axios({ method: 'PUT', 
-                    url: `${baseUrl}/clubs/updateDesuscrip`, 
+                    url: `${baseUrl}/clubs/unsubscribe`, 
                     data: { id: clubId, idU: user._id}})
                 .then((response) => {
                 updateStatus(user._id)
@@ -77,7 +77,7 @@ const RegisterClub = () => {
         if(board === "board-subscribed"){
             console.log("Entra a cursos suscritos")
             axios({ method: 'PUT', 
-                    url: `${baseUrl}/clubs/updateSuscrip`, 
+                    url: `${baseUrl}/clubs/subscribe`, 
                     data: { id: clubId, idU: user._id}})
                 .then((response) => {
                     updateStatus(user._id)

@@ -2,11 +2,11 @@ from flask import Flask, request, jsonify, abort
 from flask_pymongo import PyMongo, ObjectId
 import os 
 
-PORT = os.getenv("PORT")
-PORT_MONGO  = os.getenv("PORT_MONGO")
+# PORT = os.getenv("PORT")
+# PORT_MONGO  = os.getenv("PORT_MONGO")
 
-# PORT = 5000
-# PORT_MONGO = 110
+PORT = 5000
+PORT_MONGO = 110
 
 
 app= Flask(__name__)
@@ -14,15 +14,17 @@ app.config['MONGO_URI']= 'mongodb://localhost:{PORT_MONGO}/proyecto'.format(PORT
 
 mongo= PyMongo(app)
 
-
 db_users=mongo.db.users
 db_clubs=mongo.db.clubs
 
 #           ______________________________________
-#_________/ User querries
+#_________/ USER QUERIES 
 
 #___________GET_________________
-
+"""
+Gets every user on the database.
+:return: A list of JSON objects with the users information.
+"""
 @app.route('/users', methods=['GET'])
 def get_users():
 
@@ -69,6 +71,10 @@ def get_user():
 #___________POST_________________
 
 """
+It takes a JSON object from the request, and inserts it into the database
+:return: The user that was created.
+
+Body example:
     {
     "user":"santamix",
     "password":"santa",
@@ -78,7 +84,8 @@ def get_user():
     "isAdmin":"true"
     }
 """
-@app.route('/users/CreateUser', methods=['POST'])
+@app.route('/users/createUser', methods=['POST'])
+
 def create_user():
 
     user=request.json['user'] 
@@ -109,13 +116,19 @@ def create_user():
                     })
 
 """
+It takes a user and password from a POST request, and then it searches the database for a user with
+the same user and password. If it finds one, it returns a JSON with the user's information. If it
+doesn't find one, it returns a 404 error.
+:return: A JSON object with the user's information.
+
+Body example:
     {
     "user":"santamix",
     "password":"santa"
     }
 """
 @app.route('/users/userLogin', methods=['POST'])
-def get_user_login():
+def user_login():
 
     user=request.json['user']
     password=request.json['password']
@@ -144,13 +157,19 @@ def get_user_login():
     return response
 
 """
+It takes a admin's user and password from a POST request, and then it searches the database for a user with
+the same user and password. If it finds one, it returns a JSON with the user's information. If it
+doesn't find one, it returns a 404 error.
+:return: A JSON object with the user's information.
+
+Body example:
     {
     "user":"santamix",
     "password":"santa"
     }
 """
 @app.route('/users/adminLogin', methods=['POST'])
-def get_admin_login():
+def admin_login():
 
     user=request.json['user']
     password=request.json['password']
@@ -181,6 +200,10 @@ def get_admin_login():
 
 #___________DELETE_________________
 
+"""
+It takes the user_id from the request, finds the user in the database, and deletes it
+:return: The return value of the function is a json object.
+"""
 @app.route('/users/deleteUser', methods=['DELETE'])
 def delete_user():
 
@@ -192,10 +215,13 @@ def delete_user():
 
 
 #           _______________________________________
-#_________/ Club querries
+#_________/ CLUB QUERIES
 
 #___________GET_________________
-
+"""
+It takes all the documents in the collection 'clubs' and returns them as a JSON object.
+:return:JSON objects with the clubs information.
+"""
 @app.route('/clubs', methods=['GET'])
 def get_clubs():
 
@@ -212,12 +238,13 @@ def get_clubs():
     return jsonify(clubs)
 
 """
-    {
-    "id":"632f4b12b91fa067007722a6"
-    }
+It returns a list of clubs that the user with the id 'id' is following.
+
+:param id: the id of the user (must be a hex string)
+:return: A list of clubs that the user is following.
 """
 @app.route('/clubs/myClubs/<id>', methods=['GET'])
-def my_clubs(id):
+def get_my_clubs(id):
     clubs=[]
     
     responses=db_clubs.find({'followers':{'$elemMatch':{'idU':id}}})
@@ -234,6 +261,10 @@ def my_clubs(id):
 #___________POST_________________
 
 """
+It creates a new club in the database, and adds the user who created it to the list of followers.
+:return: The response is a JSON object if the creation is succesful, error 500 otherwise.
+
+Body example:
     {
     "name":"Dibujo",
     "category":"Arte",
@@ -244,8 +275,7 @@ def my_clubs(id):
                 ]
     }  
 """
-
-@app.route('/clubs/CreateClub', methods=['POST'])
+@app.route('/clubs/createClub', methods=['POST'])
 def create_club():
     name = request.json['name']
     category = request.json['category']
@@ -260,41 +290,54 @@ def create_club():
         response = {'message':'exito'}
 
     else:
-        response = {'message':'error'}
+        abort(500)
 
     return response
 
 
 #___________PUT_________________
-
-#Metodo para desuscribirse de un club
-@app.route('/clubs/updateDesuscrip', methods=['PUT'])
-def update_desuscrip():
-    
-    club_id=request.json['id']
-    user_id=request.json['idU']
-    
-    db_clubs.update_one({'_id':ObjectId(club_id)},{'$pull':{'followers':{'idU':user_id}}})
-    return jsonify({'msg': 'User updated'})
-
-#Metodo para suscribirse a un club  
-@app.route('/clubs/updateSuscrip', methods=['PUT'])
-def update_suscrip():
+"""
+It takes the id of a club and the id of a user and adds the user to the club's followers list.
+:return: The return value is a JSON object with a single key-value pair. The key is msg and the
+value is Club updated.
+"""
+@app.route('/clubs/subscribe', methods=['PUT'])
+def susbcribe_club():
     
     club_id=request.json['id']
     user_id=request.json['idU']
     
     db_clubs.update_one({'_id':ObjectId(club_id)},{'$push':{'followers':{'idU':user_id}}})
-    return jsonify({'msg': 'User updated'})
+    return jsonify({'msg': 'Club updated'})
+
+"""
+It takes a club_id and a user_id and removes the user_id from the followers array of the club_id.
+:return: The return value is a JSON object with a single key-value pair. The key is msg and the
+value is Club updated.
+"""
+@app.route('/clubs/unsubscribe', methods=['PUT'])
+def unsubscribe_club():
+    
+    club_id=request.json['id']
+    user_id=request.json['idU']
+    
+    db_clubs.update_one({'_id':ObjectId(club_id)},{'$pull':{'followers':{'idU':user_id}}})
+    return jsonify({'msg': 'Club updated'})
+
 
 #___________DELETE_________________
 
 """
+It deletes a club from the database
+:return: The return value is a JSON object with a message.
+
+Body example:
     {
     "id":"632f8dbbc09c9bb365a1e955"
     }
 """
 @app.route('/clubs/deleteClub', methods=['DELETE'])
+
 def delete_club():
 
     club_id=request.json['id']
@@ -304,7 +347,7 @@ def delete_club():
     return jsonify({'msg':'Club deleted'})
 
 #      ________________________________________
-#_____/Special queries
+#_____/SPECIAL QUERIES
 
 #1.____________________________________________
 # Cantidad total de clubes distintos
@@ -316,10 +359,9 @@ def delete_club():
 def get_club_count_by_category():
 
     categories = ["Deportes","Artes","Idiomas","Matematicas","Ciencias","Manualidades"]
-
     category_count = []
 
-    #Count existing categories
+    #Count for existing categories
     for doc in db_clubs.aggregate([
         {"$group" : 
             { "_id" : "$category",
@@ -356,46 +398,34 @@ def get_club_count_by_category():
 #clubes sugeridos para los tres estudiantes
 #que más sugerencias hayan realizado.
 
-@app.route('/clubs/usersTopSubs', methods=['GET'])
-def user_top_subs():
+@app.route('/users/top3subs', methods=['GET'])
+def top_3_subs():
     
     users=[]
-    for doc in db_users.find({'isAdmin': False}):
+
+    #Get non-admin users
+    for club in db_users.find({'isAdmin': False}):
         users.append({
-            '_id':str(ObjectId(doc['_id'])),          
-            'names':doc['names'],
-            'lastnames':doc['lastnames'],
+            '_id':str(ObjectId(club['_id'])),          
+            'names':club['names'],
+            'lastnames':club['lastnames'],
         })
 
-    apps=[]
+    #Add amount of subscriptions
     for user in users:
-        responses=db_clubs.find({'followers':{'$elemMatch':{'idU':user['_id']}}})
+        user_clubs=db_clubs.find({'followers':{'$elemMatch':{'idU':user['_id']}}})
         count_appeared=0
-        for doc in responses:
+        for club in user_clubs:
             count_appeared+=1
-            apps.append({
-                '_id':str(ObjectId(doc['_id'])),
-                'name':doc['name'],
-                'category':doc['category'],
-                'followers':doc['followers']})
-        
         user['count']=count_appeared
-    orden=sorted(users, key=lambda x: x['count'], reverse=True)
-    i=0
-    top=[]
-    for doc5 in orden:
-        if doc5 and i<3:
-            i+=1
-            print(i)        
-            top.append({
-                '_id':str(ObjectId(doc5['_id'])),          
-                'names':doc5['names'],
-                'lastnames':doc5['lastnames'],
-                'count':doc5['count']
-                    
-                })
 
-    return jsonify(top)
+    #Sort users
+    users=sorted(users, key=lambda x: x['count'], reverse=True)
+
+    if len(users) > 3:
+        users = users[:3]
+     
+    return jsonify(users)
 
 #3.____________________________________________
 #  Top 5 de clubes sugeridos. Se debe mostrar una
@@ -403,43 +433,40 @@ def user_top_subs():
 #  incluyendo el nombre del club, la categoría
 #  y la cantidad de veces que fue sugerido.
 
-@app.route('/clubs/getClubsTop5', methods=['GET'])
+@app.route('/clubs/top5', methods=['GET'])
 def get_top_5_clubs():
 
-    clubs=[]
+    clubs_follower_count=[]
 
+    #Get follower count for each club
     for doc in db_clubs.aggregate([
-        {"$project":{"count":
-        {"$size":"$followers"}
-        }}]):
+        {"$project":{"count":{"$size":"$followers"}}}
+        ]):
 
-        clubs.append({
+        clubs_follower_count.append({
             '_id':str(ObjectId(doc['_id'])),
             'followers':doc['count']         
         })
-        print(clubs)
     
-    orden=sorted(clubs, key=lambda x: x['followers'], reverse=True)
+    #Sort the count
+    clubs_follower_count=sorted(clubs_follower_count, key=lambda x: x['followers'], reverse=True)
 
-    top=[]
+    top_5=[]
     i=0
 
-    for doc2 in orden:
-
-        doc3=db_clubs.find_one({'_id':ObjectId(doc2['_id'])})
-        
-        if doc3 and i<5:  
-
+    #Get top 5 clubs by id
+    for follower_count in clubs_follower_count:
+        club=db_clubs.find_one({'_id':ObjectId(follower_count['_id'])})
+        if club and i<5:  
             i+=1        
-            top.append({
-                    '_id':str(ObjectId(doc3['_id'])),
-                    'name':doc3['name'],
-                    'category':doc3['category'],
-                    'followers':doc2['followers']
-                    
+            top_5.append({
+                    '_id':str(ObjectId(club['_id'])),
+                    'name':club['name'],
+                    'category':club['category'],
+                    'followers':follower_count['followers']
                 })
     
-    return jsonify(top)
+    return jsonify(top_5)
 
 
 #4.____________________________________________
@@ -447,41 +474,42 @@ def get_top_5_clubs():
 #lista de los tres clubes menos solicitados,
 #incluyendo el nombre del club, la categoría y 
 #la cantidad de veces que fue sugerido.
-@app.route('/clubs/getClubsBtt3', methods=['GET'])
+
+@app.route('/clubs/bottom3', methods=['GET'])
 def get_bottom_3_clubs():
 
-    clubs=[]
+    clubs_follower_count=[]
+
+    #Get follower count for each club
     for doc in db_clubs.aggregate([
         {"$project":{"count":
         {"$size":"$followers"}
         }}]):
 
-        clubs.append({
+        clubs_follower_count.append({
             '_id':str(ObjectId(doc['_id'])),
             'followers':doc['count'] #Hacer un conteo en el fe          
         })
     
-    orden=sorted(clubs, key=lambda x: x['followers'])
+    #Sort the count
+    clubs_follower_count=sorted(clubs_follower_count, key=lambda x: x['followers'])
 
-    btt3=[]
+    bottom_3=[]
     i=0
 
-    for doc2 in orden:  
-
-        doc3=db_clubs.find_one(
-            {'_id':ObjectId(doc2['_id'])}) 
-
-        if doc3 and i<3: 
-
+    #Get bottom 3 clubs by id
+    for follower_count in clubs_follower_count:  
+        club=db_clubs.find_one({'_id':ObjectId(follower_count['_id'])})
+        if club and i<3: 
             i+=1        
-            btt3.append(
-                {'_id':str(ObjectId(doc3['_id'])),
-                    'name':doc3['name'],
-                    'category':doc3['category'],
-                    'followers':doc2['followers']                    
+            bottom_3.append(
+                {'_id':str(ObjectId(club['_id'])),
+                    'name':club['name'],
+                    'category':club['category'],
+                    'followers':follower_count['followers']                    
                 })  
 
-    return jsonify(btt3)
+    return jsonify(bottom_3)
 
 #______________________________________________________
 

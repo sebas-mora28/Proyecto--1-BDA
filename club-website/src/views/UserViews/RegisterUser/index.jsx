@@ -29,7 +29,7 @@ const RegisterUser = () => {
 
     const validate = (fieldValues = values) => {
         let temp = {...errors}
-        temp.user = fieldValues.user === "" ? "Este espacio es reqerido" : ""
+        temp.user = fieldValues.user === "" ? "Este espacio es requerido" : ""
         temp.password = fieldValues.password === "" ? "Este espacio es requerido" : ""  
         temp.names = fieldValues.names === "" ? "Este espacio es requerido" : ""
         temp.lastnames = fieldValues.lastnames === "" ? "Este espacio es requerido" : ""
@@ -54,7 +54,7 @@ const RegisterUser = () => {
     const nextStep = () => {
         console.log("entra: ", validate())
         if(validate()){
-            axios({method: 'POST', url: `${baseUrl}/users/CreateUser`, data: {
+            axios({method: 'POST', url: `${baseUrl}/users/createUser`, data: {
                 ...values, isAdmin: false
               }}).then((response) => {
                 const user = response.data

@@ -39,7 +39,7 @@ const CreateClub = ({open, setOpen}) => {
         if(validate()){
             const body = {...values, idUser: user._id}
             console.log(body)
-            axios({method: 'POST', url:`${baseUrl}/clubs/CreateClub`, data: body})
+            axios({method: 'POST', url:`${baseUrl}/clubs/createClub`, data: body})
             setOpen(false);
         }
     }

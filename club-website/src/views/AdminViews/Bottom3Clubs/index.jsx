@@ -39,7 +39,7 @@ const Bottom3Clubs = () => {
   }));
 
   useEffect(() => {
-    axios({method: 'GET', url: `${baseUrl}/clubs/getClubsBtt3`}).then((response) => {
+    axios({method: 'GET', url: `${baseUrl}/clubs/bottom3`}).then((response) => {
       if(response.data){
         setClubs(response.data);
       }
