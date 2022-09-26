@@ -11,8 +11,10 @@ import { useForm, Form } from '../../../components/UseForm';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { baseUrl } from '../../../utils/api';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 const RegisterAdmin = () => {
+
+    const navigate = useNavigate();
 
     const initialValues = {
         user: '',
@@ -58,6 +60,8 @@ const RegisterAdmin = () => {
           axios({method: 'POST', url: `${baseUrl}/users/CreateUser`, data: {
             ...values, section: '', isAdmin: true
           }}).then((response) => {
+            navigate("/login")
+            
             
           })
         }
@@ -87,41 +91,53 @@ const RegisterAdmin = () => {
           margin="normal"
           required
           fullWidth
-          name="Name"
-          label="Nombre completo"
+          name="user"
+          label="Usuario"
           type="text"
-          id="Name"
-          autoComplete="Name"
+          id="user"
           onChange={handleInputChange}
-          value={values.Password}
-          {...(errors.Name && {error:true, helperText:errors.Name})}
+          value={values.user}
+          {...(errors.user && {error:true, helperText:errors.user})}
         />
         <TextField
           margin="normal"
           required
           fullWidth
-          id="email"
-          label="Correo electrónico"
-          name="Email"
-          autoComplete="email"
-          autoFocus
-          onChange={handleInputChange}
-          value={values.Email}
-          {...(errors.Email && {error:true, helperText:errors.Email})}
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="Password"
+          name="password"
           label="Contraseña"
           type="password"
           id="password"
           autoComplete="current-password"
           onChange={handleInputChange}
-          value={values.Password}
-          {...(errors.Password && {error:true, helperText:errors.Password})}
+          value={values.password}
+          {...(errors.password && {error:true, helperText:errors.password})}
         /> 
+      <TextField
+          margin="normal"
+          required
+          fullWidth
+          name="names"
+          label="Nombre"
+          type="text"
+          id="names"
+          autoComplete="Name"
+          onChange={handleInputChange}
+          value={values.names}
+          {...(errors.names && {error:true, helperText:errors.names})}
+        />
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="lastnames"
+          label="Apellidos"
+          name="lastnames"
+          autoComplete="email"
+          autoFocus
+          onChange={handleInputChange}
+          value={values.lastnames}
+          {...(errors.lastnames && {error:true, helperText:errors.lastnames})}
+        />
         <Button
           type="submit"
           fullWidth

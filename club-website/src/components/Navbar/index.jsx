@@ -6,10 +6,12 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import {useNavigate} from 'react-router-dom';
+import { UserContext } from '../../utils/auth';
 
 const Navbar = () => {
 
   const navigate = useNavigate();
+  const user = React.useContext(UserContext)
 
   return (
     <AppBar position="static" style={{ background: '#118CE7' }}>
@@ -34,17 +36,25 @@ const Navbar = () => {
             }}
           >
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>              
-              <Button
-                  onClick={() => navigate("/user/register-club")}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                  >
-                  Registrarse a un club
-              </Button>
-          </Box>
+          <>
+            {
+              user.isAdmin === false ?          
+              <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>              
+                  <Button
+                    onClick={() => navigate("/user/register-club")}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                    >
+                    Registrarse a un club
+                </Button>
+              </Box> : <></>
+            }
+          
+          </>
+
         </Toolbar>
       </Container>
     </AppBar>
   );
 };
 export default Navbar;
+
