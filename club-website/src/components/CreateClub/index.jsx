@@ -1,5 +1,5 @@
 import { FormControl, Grid, InputLabel, MenuItem, TextField } from '@mui/material';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../Header';
 import Modal from '../Modal';
 import { useForm, Form } from '../UseForm';
@@ -9,15 +9,18 @@ import axios from 'axios';
 import { baseUrl } from '../../utils/api';
 import { UserContext } from '../../utils/auth';
 import { useContext } from 'react';
+import {Alert} from '@mui/material';
 
 const CreateClub = ({open, setOpen}) => {
 
     const {user, setUser} = useContext(UserContext)
+    const [error, setError] = useState(false)
 
     const initialValues = {
         name: '',
         category: ''
     }
+
 
     const validate = (fieldValues = values) => {
         let temp = {...errors}
@@ -33,14 +36,19 @@ const CreateClub = ({open, setOpen}) => {
     }
 
     const submit = (e) => {
+        setError(false)
 
         e.preventDefault();
 
         if(validate()){
             const body = {...values, idUser: user._id}
             console.log(body)
-            axios({method: 'POST', url:`${baseUrl}/clubs/createClub`, data: body})
-            setOpen(false);
+            axios({method: 'POST', url:`${baseUrl}/clubs/createClub`, data: body}).then((response) => {
+                setOpen(false);
+            }
+            ).catch((error) => {
+                setError(true)
+            })
         }
     }
 
@@ -54,8 +62,18 @@ const CreateClub = ({open, setOpen}) => {
     } = useForm(initialValues, true, validate);
 
 
+    useEffect(() => {
+        setValues(initialValues)
+        setError(false)
+
+    }, [open])
+
+
     return (
       <Modal open={open}>
+        {
+            error ? <Alert severity="error">Ya se encuentra registrado en ese club </Alert> : <></>
+        }
         <Form onSubmit={submit}>
           <Grid container>
             <Grid item container md={12} justifyContent='center'>
@@ -104,6 +122,7 @@ const CreateClub = ({open, setOpen}) => {
                 </Grid>
                 <Grid item container md={12} mt={4} mb={4} justifyContent='center'>
                     <Button variant='contained' type="submit">Crear</Button>
+                    <Button variant='contained' onClick={()=> setOpen(false)} >Cerrar</Button>
                 </Grid>
             </Grid>
           </Grid>

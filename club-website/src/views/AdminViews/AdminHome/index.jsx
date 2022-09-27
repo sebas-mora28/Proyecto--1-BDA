@@ -7,12 +7,12 @@ import { UserContext } from '../../../utils/auth'
 const AdminHome = () => {
 
     const navigate = useNavigate();
-    const user = useContext(UserContext)
+    const {user, setUser } = useContext(UserContext)
 
     return (
         <Grid container>
             <Grid container mt={3} justifyContent='center'>
-                <h1>Bienvenido: {user.names} </h1>
+                <h1>Bienvenido: {user.names} {user.lastnames} </h1>
             </Grid>
             <Grid container mt={3} justifyContent='center' alignItems='center' rowSpacing={4}>
                 <Grid item container md={6} justifyContent='center'>

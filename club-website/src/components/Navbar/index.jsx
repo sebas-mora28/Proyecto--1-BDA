@@ -7,6 +7,7 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import {useNavigate} from 'react-router-dom';
 import { UserContext } from '../../utils/auth';
+import { Grid } from '@mui/material';
 
 const Navbar = () => {
 
@@ -15,28 +16,8 @@ const Navbar = () => {
 
   return (
     <AppBar position="static" style={{ background: '#118CE7' }}>
-      <Container maxWidth="xl">
+      <Grid container maxWidth="xl" justifyContent='space-between'>
         <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'Formula1',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: '#FFFFFF',
-              textDecoration: 'none',
-              '&:hover': {
-                color: "#000000",
-             }
-            }}
-          >
-          </Typography>
-          <>
             {
               user.isAdmin === false ?          
               <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>              
@@ -49,10 +30,16 @@ const Navbar = () => {
               </Box> : <></>
             }
           
-          </>
-
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex'}}}>              
+                  <Button
+                    onClick={() => navigate("/login")}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                    >
+                    Log out
+                </Button>
+              </Box>
         </Toolbar>
-      </Container>
+      </Grid>
     </AppBar>
   );
 };

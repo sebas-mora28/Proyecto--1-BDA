@@ -57,7 +57,7 @@ const RegisterAdmin = () => {
     const submit = (e) => {
         e.preventDefault();
         if(validate()){
-          axios({method: 'POST', url: `${baseUrl}/users/CreateUser`, data: {
+          axios({method: 'POST', url: `${baseUrl}/users/createUser`, data: {
             ...values, section: '', isAdmin: true
           }}).then((response) => {
             navigate("/login")

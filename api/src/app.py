@@ -281,13 +281,31 @@ def create_club():
     category = request.json['category']
     id_user = request.json['idUser']
 
-    existing_clubs = get_clubs()
+    
+    clubs=[]
 
-    for club in existing_clubs:
-        if name and category in club.values():
+    for doc in db_clubs.find():
+        clubs.append({
+            '_id':str(ObjectId(doc['_id'])),
+            'name':doc['name'],
+            'category':doc['category'],
+            'followers':doc['followers']    
+    })
+
+
+
+    for club in clubs:
+
+        if name == club['name'] and category == club['category']:
             club_id=club["_id"]
-            db_clubs.update_one({'_id':ObjectId(club_id)},{'$push':{'followers':{'idU':id_user}}})
-            return jsonify({'msg': 'club already exists'})
+            print(club_id)
+            followers = club['followers']
+
+            if id_user not in followers.values():
+                db_clubs.update_one({'_id':ObjectId(club_id)},{'$push':{'followers':{'idU':id_user}}})
+                return jsonify({'msg': 'club already exists'})
+            else:
+                abort(404)
 
     new_club=db_clubs.insert_one(
                     {'name':name,
