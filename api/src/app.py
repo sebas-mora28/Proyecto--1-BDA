@@ -2,11 +2,11 @@ from flask import Flask, request, jsonify, abort
 from flask_pymongo import PyMongo, ObjectId
 import os 
 
-# PORT = os.getenv("PORT")
-# PORT_MONGO  = os.getenv("PORT_MONGO")
+PORT = os.getenv("PORT")
+PORT_MONGO  = os.getenv("PORT_MONGO")
 
-PORT = 5000
-PORT_MONGO = 110
+# PORT = 5000
+# PORT_MONGO = 110
 
 
 app= Flask(__name__)
@@ -280,6 +280,14 @@ def create_club():
     name = request.json['name']
     category = request.json['category']
     id_user = request.json['idUser']
+
+    existing_clubs = get_clubs()
+
+    for club in existing_clubs:
+        if name and category in club.values():
+            club_id=club["_id"]
+            db_clubs.update_one({'_id':ObjectId(club_id)},{'$push':{'followers':{'idU':id_user}}})
+            return jsonify({'msg': 'club already exists'})
 
     new_club=db_clubs.insert_one(
                     {'name':name,
