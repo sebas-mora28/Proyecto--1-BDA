@@ -24,6 +24,10 @@ const MyClubs = () => {
     return (
       <Grid container justifyContent='center'>
 
+        <Grid item container md={12} mt={2} justifyContent='center'>
+            <h1>Bievenido: {user.names} {user.lastnames}</h1>
+        </Grid>
+
           <Grid item container md={12} mt={2} justifyContent='center'>
               <h1>Mis clubes</h1>
 
